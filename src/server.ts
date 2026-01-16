@@ -15,6 +15,9 @@ const PgSession = connectPgSimple(session);
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Required for Vercel/Heroku to trust the proxy and allow secure cookies
+app.set('trust proxy', 1);
+
 // Initialize DB (Schema check)
 // In serverless, we might skip this or check on every req, but for now init on startup is okay for local dev
 // For vercel, the 'initDB' might behave differently or be part of a build step/migration,
@@ -168,10 +171,7 @@ app.get('/test-db', async (req, res) => {
         error: errDetail
     });
 });
-env: process.env.NODE_ENV
-        });
-    }
-});
+
 
 // Only listen if not running in serverless (local dev)
 if (require.main === module) {
