@@ -120,7 +120,8 @@ app.post('/signup', async (req, res) => {
         res.redirect('/login');
     } catch (error: any) {
         console.error(error);
-        res.render('signup', { error: 'Email already exists or error creating account' });
+        // creating a specific message for users but keeping the detailed error for debugging if needed
+        res.render('signup', { error: `Error: ${error.message}` });
     }
 });
 

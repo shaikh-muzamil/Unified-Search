@@ -23,24 +23,17 @@ export const initDB = async () => {
         `);
 
         // Session table for connect-pg-simple
+        // Session table for connect-pg-simple
+        // Using a simpler robust query that doesn't fail if table exists
         await pool.query(`
             CREATE TABLE IF NOT EXISTS session (
                 sid varchar NOT NULL COLLATE "default",
                 sess json NOT NULL,
-                expire timestamp(6) NOT NULL
-            )
-            WITH (OIDS=FALSE);
-            
-            ALTER TABLE session ADD CONSTRAINT session_pkey PRIMARY KEY (sid) NOT DEFERRABLE INITIALLY IMMEDIATE;
-            
+                expire timestamp(6) NOT NULL,
+                CONSTRAINT session_pkey PRIMARY KEY (sid)
+            );
             CREATE INDEX IF NOT EXISTS IDX_session_expire ON session (expire);
-        `).catch(err => {
-            // Ignore error if table/index already exists (pg-simple might create it or specific error codes)
-            // Ideally we check existence first, but this is a rough migration script
-            if (!err.message.includes('already exists')) {
-                console.warn('Session table creation warning:', err.message);
-            }
-        });
+        `);
 
         console.log('--- Database Connected & Tables Initialized ---');
     } catch (error) {
