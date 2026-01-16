@@ -145,6 +145,15 @@ app.get('/sync', requireAuth, (req, res) => {
 // Export app for Vercel
 export default app;
 
+app.get('/test-db', async (req, res) => {
+    try {
+        const result = await pool.query('SELECT NOW()');
+        res.json({ status: 'ok', time: result.rows[0].now, env: process.env.NODE_ENV });
+    } catch (error: any) {
+        res.status(500).json({ status: 'error', message: error.message, detail: error });
+    }
+});
+
 // Only listen if not running in serverless (local dev)
 if (require.main === module) {
     app.listen(PORT, () => {
