@@ -146,11 +146,20 @@ app.get('/sync', requireAuth, (req, res) => {
 export default app;
 
 app.get('/test-db', async (req, res) => {
+    const hasDbUrl = !!process.env.DATABASE_URL;
     try {
+        if (!hasDbUrl) {
+            throw new Error('DATABASE_URL environment variable is NOT SET. The app is likely trying to connect to localhost (127.0.0.1) by default.');
+        }
         const result = await pool.query('SELECT NOW()');
-        res.json({ status: 'ok', time: result.rows[0].now, env: process.env.NODE_ENV });
+        res.json({ status: 'ok', time: result.rows[0].now, env: process.env.NODE_ENV, dbConfigured: true });
     } catch (error: any) {
-        res.status(500).json({ status: 'error', message: error.message, detail: error });
+        res.status(500).json({
+            status: 'error',
+            message: error.message,
+            dbConfigured: hasDbUrl,
+            env: process.env.NODE_ENV
+        });
     }
 });
 
