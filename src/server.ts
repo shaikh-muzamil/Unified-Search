@@ -147,18 +147,28 @@ export default app;
 
 app.get('/test-db', async (req, res) => {
     const hasDbUrl = !!process.env.DATABASE_URL;
+    const envKeys = Object.keys(process.env).sort();
+
+    // Attempt query even if no URL, just to capture the specific error object
+    let dbResult: any = 'Not attempted';
+    let errDetail: any = null;
+
     try {
-        if (!hasDbUrl) {
-            throw new Error('DATABASE_URL environment variable is NOT SET. The app is likely trying to connect to localhost (127.0.0.1) by default.');
-        }
         const result = await pool.query('SELECT NOW()');
-        res.json({ status: 'ok', time: result.rows[0].now, env: process.env.NODE_ENV, dbConfigured: true });
-    } catch (error: any) {
-        res.status(500).json({
-            status: 'error',
-            message: error.message,
-            dbConfigured: hasDbUrl,
-            env: process.env.NODE_ENV
+        dbResult = { time: result.rows[0].now };
+    } catch (e: any) {
+        dbResult = 'FAILED';
+        errDetail = { message: e.message, code: e.code, address: e.address, port: e.port };
+    }
+
+    res.json({
+        status: hasDbUrl ? 'URL_PRESENT' : 'URL_MISSING',
+        envKeys: envKeys,
+        dbConnection: dbResult,
+        error: errDetail
+    });
+});
+env: process.env.NODE_ENV
         });
     }
 });
