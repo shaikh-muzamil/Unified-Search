@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unified Workspace Search</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+    <%- include('partials/header', { user: user }) %>
+        <div class="container">
+            <header>
+                <h1>Unified Workspace Search</h1>
+                <p>Search across your Slack messages and Notion pages</p>
+            </header>
+
+            <section class="search-section">
+                <form action="/search" method="GET">
+                    <input type="text" name="q" placeholder="Search for anything..." value="<%= query %>" required>
+                    <button type="submit">Search</button>
+                </form>
+            </section>
+
+            <% if (results) { %>
+                <div class="results-container">
+                    <div class="column slack-column">
+                        <h2>Slack Results</h2>
+                        <% if (results.slack && results.slack.length> 0) { %>
+                            <ul class="result-list">
+                                <% results.slack.forEach(item=> { %>
+                                    <li class="result-item">
+                                        <a href="<%= item.permalink %>" target="_blank">
+                                            <strong>
+                                                <%= item.user %>
+                                            </strong> in #<%= item.channel %>
+                                                <p>
+                                                    <%= item.text %>
+                                                </p>
+                                                <span class="date">
+                                                    <%= new Date(item.ts * 1000).toLocaleString() %>
+                                                </span>
+                                        </a>
+                                    </li>
+                                    <% }) %>
+                            </ul>
+                            <% } else { %>
+                                <p class="no-results">No results found in Slack.</p>
+                                <% } %>
+                    </div>
+
+                    <div class="column notion-column">
+                        <h2>Notion Results</h2>
+                        <% if (results.notion && results.notion.length> 0) { %>
+                            <ul class="result-list">
+                                <% results.notion.forEach(item=> { %>
+                                    <li class="result-item">
+                                        <a href="<%= item.url %>" target="_blank">
+                                            <strong>
+                                                <%= item.title %>
+                                            </strong>
+                                            <span class="tag">
+                                                <%= item.object %>
+                                            </span>
+                                        </a>
+                                    </li>
+                                    <% }) %>
+                            </ul>
+                            <% } else { %>
+                                <p class="no-results">No results found in Notion.</p>
+                                <% } %>
+                    </div>
+                </div>
+                <% } %>
+        </div>
+</body>
+
+</html>

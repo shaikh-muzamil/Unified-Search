@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account - Unified Search</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+    <%- include('partials/header', { user: user }) %>
+        <div class="container">
+            <h1>Account Settings</h1>
+            <div class="card">
+                <h2>Profile</h2>
+                <p><strong>Name:</strong>
+                    <%= user.name %>
+                </p>
+                <p><strong>Email:</strong>
+                    <%= user.email %>
+                </p>
+            </div>
+
+            <div class="card">
+                <h2>Integrations</h2>
+                <div class="integration-status">
+                    <div class="status-item">
+                        <span>Slack</span>
+                        <span class="badge <%= slackConnected ? 'success' : 'error' %>">
+                            <%= slackConnected ? 'Connected' : 'Not Configured' %>
+                        </span>
+                    </div>
+                    <div class="status-item">
+                        <span>Notion</span>
+                        <span class="badge <%= notionConnected ? 'success' : 'error' %>">
+                            <%= notionConnected ? 'Connected' : 'Not Configured' %>
+                        </span>
+                    </div>
+                </div>
+                <p class="hint">Integrations are currently managed via the server .env file.</p>
+            </div>
+        </div>
+</body>
+
+</html>

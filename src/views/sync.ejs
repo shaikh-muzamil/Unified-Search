@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Syncing - Unified Search</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+    <%- include('partials/header', { user: user }) %>
+        <div class="container">
+            <h1>Sync Status</h1>
+            <div class="card">
+                <p>Unified Search performs real-time queries. No data is stored persistently.</p>
+                <div class="sync-activity">
+                    <div class="activity-item">
+                        <span class="time">Now</span>
+                        <span class="message">System ready for queries.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+</body>
+
+</html>

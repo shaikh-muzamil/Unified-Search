@@ -1,0 +1,18 @@
+<header>
+    <nav class="navbar">
+        <div class="logo">
+            <a href="/">Unified Search</a>
+        </div>
+        <ul class="nav-links">
+            <% if (user) { %>
+                <li><a href="/">Search</a></li>
+                <li><a href="/sync">Syncing</a></li>
+                <li><a href="/account">Account</a></li>
+                <li><a href="/logout" class="btn-logout">Logout</a></li>
+                <% } else { %>
+                    <li><a href="/login">Login</a></li>
+                    <li><a href="/signup" class="btn-signup">Sign Up</a></li>
+                    <% } %>
+        </ul>
+    </nav>
+</header>
