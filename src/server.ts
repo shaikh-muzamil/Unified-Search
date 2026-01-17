@@ -304,6 +304,18 @@ app.get('/test-db', async (req, res) => {
     });
 });
 
+app.get('/debug-env', (req, res) => {
+    res.json({
+        SLACK_CLIENT_ID: !!process.env.SLACK_CLIENT_ID,
+        SLACK_REDIRECT_URI: !!process.env.SLACK_REDIRECT_URI,
+        SLACK_VAL_LEN: process.env.SLACK_CLIENT_ID ? process.env.SLACK_CLIENT_ID.length : 0,
+        NOTION_CLIENT_ID: !!process.env.NOTION_CLIENT_ID,
+        NOTION_REDIRECT_URI: !!process.env.NOTION_REDIRECT_URI,
+        NOTION_VAL_LEN: process.env.NOTION_CLIENT_ID ? process.env.NOTION_CLIENT_ID.length : 0,
+        NODE_ENV: process.env.NODE_ENV
+    });
+});
+
 
 // Only listen if not running in serverless (local dev)
 if (require.main === module) {
