@@ -153,7 +153,7 @@ app.get('/auth/slack', (req, res) => {
         return res.status(500).send('Slack App Credentials not configured.');
     }
 
-    const url = `https://slack.com/oauth/v2/authorize?client_id=${clientId}&user_scope=${scopes}&redirect_uri=${redirectUri}`;
+    const url = `https://slack.com/oauth/v2/authorize?client_id=${encodeURIComponent(clientId)}&user_scope=${encodeURIComponent(scopes)}&redirect_uri=${encodeURIComponent(redirectUri)}`;
     res.redirect(url);
 });
 
@@ -208,7 +208,7 @@ app.get('/auth/notion', (req, res) => {
     }
 
     // Notion uses Basic Auth for token endpoint but authorization URL is standard
-    const url = `https://api.notion.com/v1/oauth/authorize?client_id=${clientId}&response_type=code&owner=user&redirect_uri=${redirectUri}`;
+    const url = `https://api.notion.com/v1/oauth/authorize?client_id=${encodeURIComponent(clientId)}&response_type=code&owner=user&redirect_uri=${encodeURIComponent(redirectUri)}`;
     res.redirect(url);
 });
 
