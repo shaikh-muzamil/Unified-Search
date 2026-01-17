@@ -316,6 +316,39 @@ app.get('/debug-env', (req, res) => {
     });
 });
 
+app.get('/auth/debug-links', (req, res) => {
+    const slackClientId = process.env.SLACK_CLIENT_ID || 'MISSING';
+    const slackRedirect = process.env.SLACK_REDIRECT_URI || 'MISSING';
+    const slackUrl = `https://slack.com/oauth/v2/authorize?client_id=${encodeURIComponent(slackClientId)}&user_scope=search:read&redirect_uri=${encodeURIComponent(slackRedirect)}`;
+
+    const notionClientId = process.env.NOTION_CLIENT_ID || 'MISSING';
+    const notionRedirect = process.env.NOTION_REDIRECT_URI || 'MISSING';
+    const notionUrl = `https://api.notion.com/v1/oauth/authorize?client_id=${encodeURIComponent(notionClientId)}&response_type=code&owner=user&redirect_uri=${encodeURIComponent(notionRedirect)}`;
+
+    res.send(`
+        <html>
+            <body style="font-family: sans-serif; padding: 2rem;">
+                <h1>OAuth Debug Links</h1>
+                <p>Use these links to verify exactly what is being sent to the providers.</p>
+                
+                <hr/>
+                <h3>Slack</h3>
+                <p><strong>Client ID:</strong> ${slackClientId}</p>
+                <p><strong>Redirect URI:</strong> ${slackRedirect}</p>
+                <p><strong>Generated URL:</strong> <div style="background: #eee; padding: 10px; word-break: break-all;">${slackUrl}</div></p>
+                <a href="${slackUrl}" style="background: #007bff; color: white; padding: 10px 20px; text-decoration: none; display: inline-block;">Test Slack Link</a>
+
+                <hr/>
+                <h3>Notion</h3>
+                <p><strong>Client ID:</strong> ${notionClientId}</p>
+                <p><strong>Redirect URI:</strong> ${notionRedirect}</p>
+                <p><strong>Generated URL:</strong> <div style="background: #eee; padding: 10px; word-break: break-all;">${notionUrl}</div></p>
+                <a href="${notionUrl}" style="background: #007bff; color: white; padding: 10px 20px; text-decoration: none; display: inline-block;">Test Notion Link</a>
+            </body>
+        </html>
+    `);
+});
+
 
 // Only listen if not running in serverless (local dev)
 if (require.main === module) {
