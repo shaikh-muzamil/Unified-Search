@@ -7,14 +7,17 @@ export interface NotionResult {
     object: string; // 'page' or 'database'
 }
 
-export const searchNotion = async (query: string): Promise<NotionResult[]> => {
-    // Initialize client here to ensure dotenv has loaded
-    const notionClient = new Client({ auth: process.env.NOTION_API_KEY });
+export const searchNotion = async (query: string, accessToken?: string): Promise<NotionResult[]> => {
+    // Use provided token or fallback to env
+    const apiKey = accessToken || process.env.NOTION_API_KEY;
 
-    if (!process.env.NOTION_API_KEY) {
-        console.warn('NOTION_API_KEY is not set.');
+    if (!apiKey) {
+        console.warn('Notion API Key is not available for this user.');
         return [];
     }
+
+    // Initialize client with the user's specific token
+    const notionClient = new Client({ auth: apiKey });
 
     try {
         const response = await notionClient.search({

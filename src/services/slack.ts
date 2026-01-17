@@ -9,16 +9,19 @@ export interface SlackResult {
     permalink: string;
 }
 
-export const searchSlack = async (query: string): Promise<SlackResult[]> => {
-    // Initialize client here to ensure dotenv has loaded
-    const slackClient = new WebClient(process.env.SLACK_USER_TOKEN);
+export const searchSlack = async (query: string, accessToken?: string): Promise<SlackResult[]> => {
+    // Use provided token or fallback to env (optional, or just enforce provided token)
+    const token = accessToken || process.env.SLACK_USER_TOKEN;
 
-    console.log('Slack Token Prefix:', process.env.SLACK_USER_TOKEN ? process.env.SLACK_USER_TOKEN.substring(0, 5) : 'None');
-
-    if (!process.env.SLACK_USER_TOKEN) {
-        console.warn('SLACK_USER_TOKEN is not set.');
+    if (!token) {
+        console.warn('Slack Access Token is not available for this user.');
         return [];
     }
+
+    // Initialize client with the specific token
+    const slackClient = new WebClient(token);
+
+    console.log('Slack Token Prefix:', token.substring(0, 5));
 
     try {
         const result = await slackClient.search.messages({

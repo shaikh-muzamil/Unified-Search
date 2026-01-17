@@ -11,7 +11,7 @@
 <body>
     <%- include('partials/header', { user: user }) %>
         <div class="container">
-            <h1>Account Settings</h1>
+            <h1>Account Settings <small style="font-size: 0.5em; color: #888;">(v2.0)</small></h1>
             <div class="card">
                 <h2>Profile</h2>
                 <p><strong>Name:</strong>
@@ -27,18 +27,21 @@
                 <div class="integration-status">
                     <div class="status-item">
                         <span>Slack</span>
-                        <span class="badge <%= slackConnected ? 'success' : 'error' %>">
-                            <%= slackConnected ? 'Connected' : 'Not Configured' %>
-                        </span>
+                        <% if (slackConnected) { %>
+                            <span class="badge success">Connected</span>
+                            <% } else { %>
+                                <a href="/auth/slack" class="button button-small">Connect Slack</a>
+                                <% } %>
                     </div>
                     <div class="status-item">
                         <span>Notion</span>
-                        <span class="badge <%= notionConnected ? 'success' : 'error' %>">
-                            <%= notionConnected ? 'Connected' : 'Not Configured' %>
-                        </span>
+                        <% if (notionConnected) { %>
+                            <span class="badge success">Connected</span>
+                            <% } else { %>
+                                <a href="/auth/notion" class="button button-small">Connect Notion</a>
+                                <% } %>
                     </div>
                 </div>
-                <p class="hint">Integrations are currently managed via the server .env file.</p>
             </div>
         </div>
 </body>

@@ -7,6 +7,7 @@ import connectPgSimple from 'connect-pg-simple';
 import { initDB, pool } from './database';
 import { searchSlack } from './services/slack';
 import { searchNotion } from './services/notion';
+import axios from 'axios';
 
 // Explicitly load .env
 dotenv.config({ path: path.resolve(__dirname, '../.env') });
@@ -73,8 +74,8 @@ app.get('/search', requireAuth, async (req, res) => {
 
     try {
         const [slackResults, notionResults] = await Promise.all([
-            searchSlack(query),
-            searchNotion(query)
+            searchSlack(query, user.slack_access_token),
+            searchNotion(query, user.notion_access_token)
         ]);
         res.render('index', { user, results: { slack: slackResults, notion: notionResults }, query });
     } catch (error) {
@@ -140,12 +141,135 @@ app.get('/logout', (req, res) => {
     req.session.destroy(() => res.redirect('/login'));
 });
 
+// --- OAuth Routes ---
+
+// Slack OAuth
+app.get('/auth/slack', (req, res) => {
+    const scopes = 'search:read'; // Add other scopes as needed
+    const redirectUri = process.env.SLACK_REDIRECT_URI;
+    const clientId = process.env.SLACK_CLIENT_ID;
+
+    if (!clientId || !redirectUri) {
+        return res.status(500).send('Slack App Credentials not configured.');
+    }
+
+    const url = `https://slack.com/oauth/v2/authorize?client_id=${clientId}&user_scope=${scopes}&redirect_uri=${redirectUri}`;
+    res.redirect(url);
+});
+
+app.get('/auth/slack/callback', async (req, res) => {
+    const { code } = req.query;
+    const userId = (req.session as any).userId;
+
+    if (!code) return res.status(400).send('No code received');
+    if (!userId) return res.redirect('/login');
+
+    try {
+        const response = await axios.post('https://slack.com/api/oauth.v2.access', null, {
+            params: {
+                client_id: process.env.SLACK_CLIENT_ID,
+                client_secret: process.env.SLACK_CLIENT_SECRET,
+                code: code,
+                redirect_uri: process.env.SLACK_REDIRECT_URI
+            }
+        });
+
+        if (response.data.ok) {
+            const accessToken = response.data.authed_user.access_token;
+            const slackUserId = response.data.authed_user.id;
+
+            await pool.query(
+                'UPDATE users SET slack_access_token = $1, slack_user_id = $2 WHERE id = $3',
+                [accessToken, slackUserId, userId]
+            );
+
+            // Update session user object
+            const userResult = await pool.query('SELECT * FROM users WHERE id = $1', [userId]);
+            (req.session as any).user = userResult.rows[0];
+
+            res.redirect('/account');
+        } else {
+            console.error('Slack OAuth Error:', response.data);
+            res.status(500).send(`Slack Auth Failed: ${response.data.error}`);
+        }
+    } catch (error) {
+        console.error('Slack OAuth Exception:', error);
+        res.status(500).send('Internal Server Error during Slack Auth');
+    }
+});
+
+// Notion OAuth
+app.get('/auth/notion', (req, res) => {
+    const clientId = process.env.NOTION_CLIENT_ID;
+    const redirectUri = process.env.NOTION_REDIRECT_URI;
+
+    if (!clientId || !redirectUri) {
+        return res.status(500).send('Notion App Credentials not configured.');
+    }
+
+    // Notion uses Basic Auth for token endpoint but authorization URL is standard
+    const url = `https://api.notion.com/v1/oauth/authorize?client_id=${clientId}&response_type=code&owner=user&redirect_uri=${redirectUri}`;
+    res.redirect(url);
+});
+
+app.get('/auth/notion/callback', async (req, res) => {
+    const { code } = req.query;
+    const userId = (req.session as any).userId;
+
+    if (!code) return res.status(400).send('No code received');
+    if (!userId) return res.redirect('/login');
+
+    try {
+        const clientId = process.env.NOTION_CLIENT_ID;
+        const clientSecret = process.env.NOTION_CLIENT_SECRET;
+        const redirectUri = process.env.NOTION_REDIRECT_URI;
+
+        // Notion requires Basic Auth header
+        const encoded = Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
+
+        const response = await axios.post('https://api.notion.com/v1/oauth/token', {
+            grant_type: 'authorization_code',
+            code: code,
+            redirect_uri: redirectUri
+        }, {
+            headers: {
+                'Authorization': `Basic ${encoded}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (response.data.access_token) {
+            const accessToken = response.data.access_token;
+            const botId = response.data.bot_id;
+
+            await pool.query(
+                'UPDATE users SET notion_access_token = $1, notion_bot_id = $2 WHERE id = $3',
+                [accessToken, botId, userId]
+            );
+
+            // Update session user object
+            const userResult = await pool.query('SELECT * FROM users WHERE id = $1', [userId]);
+            (req.session as any).user = userResult.rows[0];
+
+            res.redirect('/account');
+        } else {
+            console.error('Notion OAuth Error:', response.data);
+            res.status(500).send('Notion Auth Failed');
+        }
+    } catch (error: any) {
+        console.error('Notion OAuth Exception:', error.response ? error.response.data : error.message);
+        res.status(500).send('Internal Server Error during Notion Auth');
+    }
+});
+
 // Pages
 app.get('/account', requireAuth, (req, res) => {
+    console.log('Account page requested. User:', (req.session as any).user.email);
+    console.log('Slack Token Present:', !!(req.session as any).user.slack_access_token);
     res.render('account', {
         user: (req.session as any).user,
-        slackConnected: !!process.env.SLACK_USER_TOKEN,
-        notionConnected: !!process.env.NOTION_API_KEY
+        slackConnected: !!(req.session as any).user.slack_access_token,
+        notionConnected: !!(req.session as any).user.notion_access_token
     });
 });
 
