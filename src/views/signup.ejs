@@ -10,45 +10,43 @@
 
 <body>
     <%- include('partials/header', { user: null }) %>
-        <%- include('partials/header', { user: null }) %>
-            <main class="main-content container">
-                <div class="card" style="max-width: 400px; margin: 0 auto;">
-                    <h2 style="text-align: center; margin-bottom: 24px;">Create Account</h2>
+        <main class="main-content container">
+            <div class="card" style="max-width: 400px; margin: 0 auto;">
+                <h2 style="text-align: center; margin-bottom: 24px;">Create Account</h2>
 
-                    <% if (locals.error) { %>
-                        <div class="badge badge-error" style="text-align: center; margin-bottom: 24px; display: block;">
-                            <%= error %>
-                        </div>
-                        <% } %>
+                <% if (locals.error) { %>
+                    <div class="badge badge-error" style="text-align: center; margin-bottom: 24px; display: block;">
+                        <%= error %>
+                    </div>
+                    <% } %>
 
-                            <form action="/signup" method="POST"
-                                style="display: flex; flex-direction: column; gap: 20px;">
-                                <div class="form-group">
-                                    <label
-                                        style="display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.9rem;">Full
-                                        Name</label>
-                                    <input type="text" name="name" required placeholder="Jane Doe">
-                                </div>
-                                <div class="form-group">
-                                    <label
-                                        style="display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.9rem;">Email</label>
-                                    <input type="email" name="email" required placeholder="name@example.com">
-                                </div>
-                                <div class="form-group">
-                                    <label
-                                        style="display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.9rem;">Password</label>
-                                    <input type="password" name="password" required placeholder="••••••••">
-                                </div>
-                                <button type="submit" class="btn btn-primary" style="margin-top: 8px; width: 100%;">Sign
-                                    Up</button>
-                            </form>
+                        <form action="/signup" method="POST" style="display: flex; flex-direction: column; gap: 20px;">
+                            <div class="form-group">
+                                <label
+                                    style="display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.9rem;">Full
+                                    Name</label>
+                                <input type="text" name="name" required placeholder="Jane Doe">
+                            </div>
+                            <div class="form-group">
+                                <label
+                                    style="display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.9rem;">Email</label>
+                                <input type="email" name="email" required placeholder="name@example.com">
+                            </div>
+                            <div class="form-group">
+                                <label
+                                    style="display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.9rem;">Password</label>
+                                <input type="password" name="password" required placeholder="••••••••">
+                            </div>
+                            <button type="submit" class="btn btn-primary" style="margin-top: 8px; width: 100%;">Sign
+                                Up</button>
+                        </form>
 
-                            <p
-                                style="text-align: center; margin-top: 24px; color: var(--text-secondary); font-size: 0.95rem;">
-                                Already have an account? <a href="/login">Login</a>
-                            </p>
-                </div>
-            </main>
+                        <p
+                            style="text-align: center; margin-top: 24px; color: var(--text-secondary); font-size: 0.95rem;">
+                            Already have an account? <a href="/login">Login</a>
+                        </p>
+            </div>
+        </main>
 </body>
 
 </html>

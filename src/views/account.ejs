@@ -10,80 +10,79 @@
 
 <body>
     <%- include('partials/header', { user: user }) %>
-        <%- include('partials/header', { user: user }) %>
-            <main class="main-content container">
-                <h1 style="margin-bottom: 32px;">Settings</h1>
+        <main class="main-content container">
+            <h1 style="margin-bottom: 32px;">Settings</h1>
 
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px;">
 
-                    <!-- Profile Section -->
-                    <div class="card" style="height: fit-content;">
-                        <h2 style="margin-bottom: 24px; font-size: 1.5rem;">Profile</h2>
-                        <div style="display: flex; flex-direction: column; gap: 16px;">
-                            <div>
-                                <label
-                                    style="display: block; font-size: 0.85rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; margin-bottom: 4px;">Name</label>
-                                <div style="font-size: 1.1rem; font-weight: 500;">
-                                    <%= user.name %>
-                                </div>
-                            </div>
-                            <div>
-                                <label
-                                    style="display: block; font-size: 0.85rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; margin-bottom: 4px;">Email</label>
-                                <div style="font-size: 1.1rem; font-weight: 500;">
-                                    <%= user.email %>
-                                </div>
+                <!-- Profile Section -->
+                <div class="card" style="height: fit-content;">
+                    <h2 style="margin-bottom: 24px; font-size: 1.5rem;">Profile</h2>
+                    <div style="display: flex; flex-direction: column; gap: 16px;">
+                        <div>
+                            <label
+                                style="display: block; font-size: 0.85rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; margin-bottom: 4px;">Name</label>
+                            <div style="font-size: 1.1rem; font-weight: 500;">
+                                <%= user.name %>
                             </div>
                         </div>
-                    </div>
-
-                    <!-- Integrations Section -->
-                    <div style="display: flex; flex-direction: column; gap: 24px;">
-                        <h2 style="font-size: 1.5rem;">Integrations</h2>
-
-                        <!-- Slack Card -->
-                        <div class="card"
-                            style="display: flex; align-items: center; justify-content: space-between; padding: 32px;">
-                            <div style="display: flex; align-items: center; gap: 16px;">
-                                <span style="font-size: 2rem;">💬</span>
-                                <div>
-                                    <h3 style="margin-bottom: 4px;">Slack</h3>
-                                    <p style="color: var(--text-secondary); font-size: 0.95rem;">Connect to search
-                                        messages</p>
-                                </div>
-                            </div>
-                            <div>
-                                <% if (slackConnected) { %>
-                                    <span class="badge badge-success">Connected</span>
-                                    <% } else { %>
-                                        <a href="/auth/slack" class="btn btn-secondary">Connect</a>
-                                        <% } %>
+                        <div>
+                            <label
+                                style="display: block; font-size: 0.85rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; margin-bottom: 4px;">Email</label>
+                            <div style="font-size: 1.1rem; font-weight: 500;">
+                                <%= user.email %>
                             </div>
                         </div>
-
-                        <!-- Notion Card -->
-                        <div class="card"
-                            style="display: flex; align-items: center; justify-content: space-between; padding: 32px;">
-                            <div style="display: flex; align-items: center; gap: 16px;">
-                                <span style="font-size: 2rem;">📝</span>
-                                <div>
-                                    <h3 style="margin-bottom: 4px;">Notion</h3>
-                                    <p style="color: var(--text-secondary); font-size: 0.95rem;">Connect to search pages
-                                    </p>
-                                </div>
-                            </div>
-                            <div>
-                                <% if (notionConnected) { %>
-                                    <span class="badge badge-success">Connected</span>
-                                    <% } else { %>
-                                        <a href="/auth/notion" class="btn btn-secondary">Connect</a>
-                                        <% } %>
-                            </div>
-                        </div>
-
                     </div>
                 </div>
-            </main>
+
+                <!-- Integrations Section -->
+                <div style="display: flex; flex-direction: column; gap: 24px;">
+                    <h2 style="font-size: 1.5rem;">Integrations</h2>
+
+                    <!-- Slack Card -->
+                    <div class="card"
+                        style="display: flex; align-items: center; justify-content: space-between; padding: 32px;">
+                        <div style="display: flex; align-items: center; gap: 16px;">
+                            <span style="font-size: 2rem;">💬</span>
+                            <div>
+                                <h3 style="margin-bottom: 4px;">Slack</h3>
+                                <p style="color: var(--text-secondary); font-size: 0.95rem;">Connect to search
+                                    messages</p>
+                            </div>
+                        </div>
+                        <div>
+                            <% if (slackConnected) { %>
+                                <span class="badge badge-success">Connected</span>
+                                <% } else { %>
+                                    <a href="/auth/slack" class="btn btn-secondary">Connect</a>
+                                    <% } %>
+                        </div>
+                    </div>
+
+                    <!-- Notion Card -->
+                    <div class="card"
+                        style="display: flex; align-items: center; justify-content: space-between; padding: 32px;">
+                        <div style="display: flex; align-items: center; gap: 16px;">
+                            <span style="font-size: 2rem;">📝</span>
+                            <div>
+                                <h3 style="margin-bottom: 4px;">Notion</h3>
+                                <p style="color: var(--text-secondary); font-size: 0.95rem;">Connect to search pages
+                                </p>
+                            </div>
+                        </div>
+                        <div>
+                            <% if (notionConnected) { %>
+                                <span class="badge badge-success">Connected</span>
+                                <% } else { %>
+                                    <a href="/auth/notion" class="btn btn-secondary">Connect</a>
+                                    <% } %>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </main>
 </body>
 
 </html>
