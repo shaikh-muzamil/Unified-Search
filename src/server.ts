@@ -40,7 +40,7 @@ app.use(session({
     saveUninitialized: false,
     cookie: {
         maxAge: 7 * 24 * 60 * 60 * 1000, // 1 week
-        secure: process.env.NODE_ENV === 'production' // true in production
+        secure: false // process.env.NODE_ENV === 'production' // Temporarily disable for debugging
     }
 }));
 
@@ -97,7 +97,15 @@ app.post('/login', async (req, res) => {
         if (user && await bcrypt.compare(password, user.password)) {
             (req.session as any).userId = user.id;
             (req.session as any).user = user;
-            res.redirect('/');
+
+            // Explicitly save session before redirecting to ensure it's written to DB
+            req.session.save((err) => {
+                if (err) {
+                    console.error('Session save error:', err);
+                    return res.render('login', { error: 'Error saving session. Check logs.' });
+                }
+                res.redirect('/');
+            });
         } else {
             res.render('login', { error: 'Invalid email or password' });
         }
