@@ -212,9 +212,76 @@ app.get('/auth/notion', (req, res) => {
     res.redirect(url);
 });
 
-// ... (Callback route remains similar, but good to trim there too in a real full refactor, keeping it minimal here for now) ...
+app.get('/auth/notion/callback', async (req, res) => {
+    const { code } = req.query;
+    const userId = (req.session as any).userId;
 
-// ...
+    if (!code) return res.status(400).send('No code received');
+    if (!userId) return res.redirect('/login');
+
+    try {
+        const clientId = (process.env.NOTION_CLIENT_ID || '').trim();
+        const clientSecret = (process.env.NOTION_CLIENT_SECRET || '').trim();
+        const redirectUri = (process.env.NOTION_REDIRECT_URI || '').trim();
+
+        // Notion requires Basic Auth header
+        const encoded = Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
+
+        const response = await axios.post('https://api.notion.com/v1/oauth/token', {
+            grant_type: 'authorization_code',
+            code: code as string,
+            redirect_uri: redirectUri
+        }, {
+            headers: {
+                'Authorization': `Basic ${encoded}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (response.data.access_token) {
+            const accessToken = response.data.access_token;
+            const botId = response.data.bot_id;
+
+            await pool.query(
+                'UPDATE users SET notion_access_token = $1, notion_bot_id = $2 WHERE id = $3',
+                [accessToken, botId, userId]
+            );
+
+            // Update session user object
+            const userResult = await pool.query('SELECT * FROM users WHERE id = $1', [userId]);
+            (req.session as any).user = userResult.rows[0];
+
+            res.redirect('/account');
+        } else {
+            console.error('Notion OAuth Error:', response.data);
+            res.status(500).send('Notion Auth Failed');
+        }
+    } catch (error: any) {
+        console.error('Notion OAuth Exception:', error.response ? error.response.data : error.message);
+        res.status(500).send('Internal Server Error during Notion Auth');
+    }
+});
+
+// Pages
+app.get('/account', requireAuth, (req, res) => {
+    // Check tokens from the user object in session
+    // (Ensure session user is up to date or fetch fresh?)
+    // For now, trust session, but ideally fetch fresh.
+    const user = (req.session as any).user;
+
+    res.render('account', {
+        user: user,
+        slackConnected: !!user.slack_access_token,
+        notionConnected: !!user.notion_access_token
+    });
+});
+
+app.get('/sync', requireAuth, (req, res) => {
+    res.render('sync', { user: (req.session as any).user });
+});
+
+// Export app for Vercel
+export default app;
 
 app.get('/auth/debug-links', (req, res) => {
     const slackClientId = (process.env.SLACK_CLIENT_ID || '').trim() || 'MISSING';
