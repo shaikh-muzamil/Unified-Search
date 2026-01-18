@@ -49,6 +49,8 @@ export const initDB = async () => {
             CREATE INDEX IF NOT EXISTS IDX_session_expire ON session(expire);
         `);
 
+
+
         console.log('--- Database Connected & Tables Initialized ---');
     } catch (error) {
         console.error('Database Initialization Error:', error);

@@ -45,6 +45,8 @@ app.use(session({
     }
 }));
 
+
+
 // View Engine
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
@@ -280,6 +282,8 @@ app.get('/sync', requireAuth, (req, res) => {
     res.render('sync', { user: (req.session as any).user });
 });
 
+
+
 // Export app for Vercel
 export default app;
 
@@ -315,6 +319,8 @@ app.get('/auth/debug-links', (req, res) => {
         </html>
     `);
 });
+
+
 
 
 // Only listen if not running in serverless (local dev)

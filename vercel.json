@@ -5,14 +5,17 @@
             "src": "src/server.ts",
             "use": "@vercel/node",
             "config": {
-                "includeFiles": ["src/views/**", "src/public/**"]
+                "includeFiles": [
+                    "src/views/**",
+                    "src/public/**"
+                ]
             }
         }
     ],
-    "routes": [
+    "rewrites": [
         {
-            "src": "/(.*)",
-            "dest": "src/server.ts"
+            "source": "/(.*)",
+            "destination": "/src/server.ts"
         }
     ]
 }
