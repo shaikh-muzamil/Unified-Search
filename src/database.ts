@@ -22,7 +22,9 @@ export const initDB = async () => {
                 slack_access_token TEXT,
                 slack_user_id TEXT,
                 notion_access_token TEXT,
-                notion_bot_id TEXT
+                notion_bot_id TEXT,
+                google_access_token TEXT,
+                google_refresh_token TEXT
             );
         `);
 
@@ -32,6 +34,8 @@ export const initDB = async () => {
             await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS slack_user_id TEXT; `);
             await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS notion_access_token TEXT; `);
             await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS notion_bot_id TEXT; `);
+            await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS google_access_token TEXT; `);
+            await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS google_refresh_token TEXT; `);
         } catch (e) {
             console.log('Migration note: Columns might already exist or error in migration', e);
         }
