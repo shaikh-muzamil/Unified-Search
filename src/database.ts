@@ -9,14 +9,18 @@ const isProduction = process.env.NODE_ENV === 'production';
 const connectionString = process.env.DATABASE_URL || process.env.POSTGRES_URL;
 
 if (!connectionString) {
-    throw new Error('FATAL: Database connection string is missing. Please set DATABASE_URL or POSTGRES_URL in environment variables.');
+    console.warn('WARNING: Database connection string is missing. Application will try to connect to localhost (which may fail on Vercel).');
+} else {
+    console.log(`Connection string detected (starts with: ${connectionString.substring(0, 10)}...)`);
 }
 
-console.log(`Connecting to database... (Source: ${process.env.DATABASE_URL ? 'DATABASE_URL' : 'POSTGRES_URL'})`);
+// Neon/Vercel Postgres requires SSL
+const requiresSsl = connectionString && (connectionString.includes('neon.tech') || connectionString.includes('vercel-storage'));
+const sslConfig = (isProduction || requiresSsl) ? { rejectUnauthorized: false } : false;
 
 export const pool = new Pool({
     connectionString: connectionString,
-    ssl: isProduction ? { rejectUnauthorized: false } : false
+    ssl: sslConfig
 });
 
 export const initDB = async () => {

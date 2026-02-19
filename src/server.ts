@@ -62,6 +62,34 @@ const requireAuth = (req: express.Request, res: express.Response, next: express.
 
 // --- Routes ---
 
+app.get('/debug', async (req, res) => {
+    try {
+        const dbRes = await pool.query('SELECT NOW()');
+        res.json({
+            status: 'online',
+            db_time: dbRes.rows[0].now,
+            env: {
+                NODE_ENV: process.env.NODE_ENV,
+                HAS_DB_URL: !!process.env.DATABASE_URL,
+                HAS_POSTGRES_URL: !!process.env.POSTGRES_URL,
+                DB_URL_START: process.env.DATABASE_URL ? process.env.DATABASE_URL.substring(0, 10) : 'N/A',
+                SLACK_CLIENT_ID: !!process.env.SLACK_CLIENT_ID,
+                SLACK_REDIRECT_URI: process.env.SLACK_REDIRECT_URI
+            }
+        });
+    } catch (e: any) {
+        res.status(500).json({
+            status: 'error',
+            error: e.message,
+            env: {
+                NODE_ENV: process.env.NODE_ENV,
+                HAS_DB_URL: !!process.env.DATABASE_URL,
+                HAS_POSTGRES_URL: !!process.env.POSTGRES_URL
+            }
+        });
+    }
+});
+
 // Landing Page
 app.get('/', requireAuth, async (req, res) => {
     const user = (req.session as any).user;
