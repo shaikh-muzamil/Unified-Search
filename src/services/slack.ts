@@ -9,30 +9,28 @@ export interface SlackResult {
     permalink: string;
 }
 
-export const searchSlack = async (query: string, accessToken?: string): Promise<SlackResult[]> => {
-    // Use provided token or fallback to env (optional, or just enforce provided token)
+const getClient = (accessToken?: string) => {
     const token = accessToken || process.env.SLACK_USER_TOKEN;
+    if (!token) return null;
+    return new WebClient(token);
+};
 
-    if (!token) {
+export const searchSlack = async (query: string, accessToken?: string): Promise<SlackResult[]> => {
+    const client = getClient(accessToken);
+    if (!client) {
         console.warn('Slack Access Token is not available for this user.');
         return [];
     }
 
-    // Initialize client with the specific token
-    const slackClient = new WebClient(token);
-
-    console.log('Slack Token Prefix:', token.substring(0, 5));
-
     try {
-        const result = await slackClient.search.messages({
+        const result = await client.search.messages({
             query: query,
             count: 10,
+            sort: 'timestamp',
+            sort_dir: 'desc'
         });
 
-        console.log('Slack Search Result:', JSON.stringify(result, null, 2)); // DEBUG LOG
-
         if (!result.messages || !result.messages.matches) {
-            console.log('Slack: No matches found in response structure.');
             return [];
         }
 
@@ -40,7 +38,7 @@ export const searchSlack = async (query: string, accessToken?: string): Promise<
             type: 'message',
             text: match.text,
             user: match.username || match.user,
-            channel: match.channel.name,
+            channel: match.channel ? match.channel.name : 'unknown',
             ts: match.ts,
             permalink: match.permalink
         }));
@@ -48,4 +46,10 @@ export const searchSlack = async (query: string, accessToken?: string): Promise<
         console.error('Error searching Slack:', error);
         return [];
     }
+};
+
+export const getRecentMessages = async (accessToken?: string): Promise<SlackResult[]> => {
+    // Since we might not have channels:history scope, we can cheat and search for "*"
+    // sorted by timestamp to get "recent" messages across all accessible channels.
+    return searchSlack('*', accessToken);
 };

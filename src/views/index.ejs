@@ -59,7 +59,7 @@
                                                     item.channel %></span>
                                         </div>
                                         <p
-                                            style="color: var(--text-secondary); margin-bottom: 16px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
+                                            style="color: var(--text-secondary); margin-bottom: 16px; display: -webkit-box; -webkit-line-clamp: 3; line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
                                             <%= item.text %>
                                         </p>
                                         <span style="font-size: 0.85rem; color: #9CA3AF;">
@@ -115,7 +115,38 @@
                                 <% } %>
                     </div>
                 </div>
-                <% } %>
+                <% } else if (typeof recents !=='undefined' && recents && recents.length> 0) { %>
+                    <div style="max-width: 800px; margin: 40px auto;">
+                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 24px;">
+                            <span style="font-size: 1.5rem;">🕒</span>
+                            <h3>Recent Slack Activity</h3>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 20px;">
+                            <% recents.forEach(item=> { %>
+                                <a href="<%= item.permalink %>" target="_blank" class="card"
+                                    style="display: block; text-decoration: none; color: inherit; padding: 24px;">
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                                        <strong style="color: var(--text-primary);">
+                                            <%= item.user %>
+                                        </strong>
+                                        <span class="badge"
+                                            style="background: #E0E7FF; color: #3730A3; font-size: 0.75rem;">#<%=
+                                                item.channel %></span>
+                                    </div>
+                                    <p
+                                        style="color: var(--text-secondary); margin-bottom: 16px; display: -webkit-box; -webkit-line-clamp: 3; line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
+                                        <%= item.text %>
+                                    </p>
+                                    <span style="font-size: 0.85rem; color: #9CA3AF;">
+                                        <%= new Date(parseFloat(item.ts) * 1000).toLocaleDateString() %>
+                                            <%= new Date(parseFloat(item.ts) * 1000).toLocaleTimeString([],
+                                                {hour: '2-digit' , minute:'2-digit'}) %>
+                                    </span>
+                                </a>
+                                <% }) %>
+                        </div>
+                    </div>
+                    <% } %>
         </main>
 </body>
 

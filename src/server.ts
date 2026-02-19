@@ -5,7 +5,7 @@ import session from 'express-session';
 import bcrypt from 'bcrypt';
 import connectPgSimple from 'connect-pg-simple';
 import { initDB, pool } from './database';
-import { searchSlack } from './services/slack';
+import { searchSlack, getRecentMessages } from './services/slack';
 import { searchNotion } from './services/notion';
 import axios from 'axios';
 
@@ -63,8 +63,24 @@ const requireAuth = (req: express.Request, res: express.Response, next: express.
 // --- Routes ---
 
 // Landing Page
-app.get('/', requireAuth, (req, res) => {
-    res.render('index', { user: (req.session as any).user, results: null, query: '' });
+app.get('/', requireAuth, async (req, res) => {
+    const user = (req.session as any).user;
+    let recentSlackMessages = null;
+
+    if (user.slack_access_token) {
+        try {
+            recentSlackMessages = await getRecentMessages(user.slack_access_token);
+        } catch (e) {
+            console.error('Error fetching recent slack messages', e);
+        }
+    }
+
+    res.render('index', {
+        user: user,
+        results: null,
+        query: '',
+        recents: recentSlackMessages
+    });
 });
 
 // Search Route

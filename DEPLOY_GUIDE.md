@@ -9,8 +9,31 @@ You need a PostgreSQL database URL. You can get a free one from [Neon.tech](http
 1.  Create a project on [Neon.tech](https://neon.tech).
 2.  Copy your **Connection String**. It looks like:
     `postgres://user:password@ep-xyz.us-east-1.aws.neon.tech/neondb?sslmode=require`
+    `postgres://user:password@ep-xyz.us-east-1.aws.neon.tech/neondb?sslmode=require`
 
-## 2. Deploy to Vercel
+## 2. Prerequisites Setup (Slack App)
+
+To get your **Client ID**, **Client Secret**, and set your **Redirect URL**:
+
+1.  Go to [Your Apps](https://api.slack.com/apps) on Slack API.
+2.  Create a new app (from scratch) or select an existing one.
+3.  **Client ID & Secret**:
+    - Navigate to **"Basic Information"** in the left sidebar.
+    - Scroll down to **"App Credentials"**.
+    - Copy the `Client ID` and `Client Secret`.
+4.  **Redirect URL**:
+    - Navigate to **"OAuth & Permissions"** in the left sidebar.
+    - Scroll down to **"Redirect URLs"**.
+    - Add your redirect URL:
+        - **Local**: `http://localhost:3000/auth/slack/callback`
+        - **Production**: `https://<your-vercel-project>.vercel.app/auth/slack/callback`
+    - Click **"Save URLs"**.
+5.  **Scopes**:
+    - Still in "OAuth & Permissions", scroll to **"Scopes"**.
+    - Add **User Token Scopes**:
+        - `search:read`
+        - `users:read` (optional, for better user info) 
+
 
 ### 1. Push to GitHub
 1.  **Initialize Git** (if you haven't already):

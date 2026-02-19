@@ -6,8 +6,16 @@ dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
 const isProduction = process.env.NODE_ENV === 'production';
 
+const connectionString = process.env.DATABASE_URL || process.env.POSTGRES_URL;
+
+if (!connectionString) {
+    throw new Error('FATAL: Database connection string is missing. Please set DATABASE_URL or POSTGRES_URL in environment variables.');
+}
+
+console.log(`Connecting to database... (Source: ${process.env.DATABASE_URL ? 'DATABASE_URL' : 'POSTGRES_URL'})`);
+
 export const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
+    connectionString: connectionString,
     ssl: isProduction ? { rejectUnauthorized: false } : false
 });
 
