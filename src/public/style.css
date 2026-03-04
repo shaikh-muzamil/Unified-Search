@@ -40,6 +40,25 @@
     --font-body: 'Inter', sans-serif;
 }
 
+[data-theme="light"] {
+    /* Color Palette */
+    --bg-base: #f8fafc;
+    --bg-elevated: #ffffff;
+    --bg-overlay: rgba(255, 255, 255, 0.8);
+    --border-subtle: rgba(0, 0, 0, 0.1);
+    --border-accent: rgba(255, 77, 77, 0.4);
+    --border-highlight: rgba(0, 229, 204, 0.5);
+
+    /* Text */
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --text-muted: #94a3b8;
+
+    /* Shadows */
+    --shadow-soft: 0 8px 30px rgba(0, 0, 0, 0.05);
+    --shadow-glow-hover: 0 12px 40px rgba(0, 229, 204, 0.2);
+}
+
 /* Global Reset & Base */
 * {
     box-sizing: border-box;
