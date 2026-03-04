@@ -50,6 +50,7 @@ export const initDB = async () => {
 
         // Migration for existing tables (safe to run multiple times)
         try {
+            await pool.query(`ALTER TABLE users ALTER COLUMN password DROP NOT NULL; `);
             await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS slack_access_token TEXT; `);
             await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS slack_user_id TEXT; `);
             await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS notion_access_token TEXT; `);

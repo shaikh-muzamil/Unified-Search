@@ -315,7 +315,85 @@ app.get('/auth/notion/callback', async (req, res) => {
     }
 });
 
-// Pages
+// Google OAuth
+app.get('/auth/google', (req, res) => {
+    const clientId = (process.env.GOOGLE_CLIENT_ID || '').trim();
+    const redirectUri = (process.env.GOOGLE_REDIRECT_URI || '').trim();
+
+    if (!clientId || !redirectUri) {
+        return res.status(500).send('Google App Credentials not configured. Please add GOOGLE_CLIENT_ID and GOOGLE_REDIRECT_URI to your .env.');
+    }
+
+    const scope = encodeURIComponent('email profile');
+    const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${encodeURIComponent(clientId)}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${scope}&access_type=offline`;
+    res.redirect(url);
+});
+
+app.get('/auth/google/callback', async (req, res) => {
+    const { code } = req.query;
+
+    if (!code) return res.status(400).send('No code received');
+
+    try {
+        const clientId = (process.env.GOOGLE_CLIENT_ID || '').trim();
+        const clientSecret = (process.env.GOOGLE_CLIENT_SECRET || '').trim();
+        const redirectUri = (process.env.GOOGLE_REDIRECT_URI || '').trim();
+
+        // 1. Exchange code for tokens
+        const tokenResponse = await axios.post('https://oauth2.googleapis.com/token', {
+            code,
+            client_id: clientId,
+            client_secret: clientSecret,
+            redirect_uri: redirectUri,
+            grant_type: 'authorization_code'
+        });
+
+        const { access_token, refresh_token } = tokenResponse.data;
+
+        // 2. Fetch User Profile
+        const userInfoResponse = await axios.get('https://www.googleapis.com/oauth2/v2/userinfo', {
+            headers: { Authorization: `Bearer ${access_token}` }
+        });
+
+        const { email, name } = userInfoResponse.data;
+
+        // 3. Upsert User in DB
+        let result = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
+        let user = result.rows[0];
+
+        if (!user) {
+            // New User Registration
+            result = await pool.query(
+                'INSERT INTO users (email, name, google_access_token, google_refresh_token) VALUES ($1, $2, $3, $4) RETURNING *',
+                [email, name, access_token, refresh_token]
+            );
+            user = result.rows[0];
+        } else {
+            // Returning User Login - Update tokens
+            result = await pool.query(
+                'UPDATE users SET name = COALESCE($1, name), google_access_token = $2, google_refresh_token = COALESCE($3, google_refresh_token) WHERE email = $4 RETURNING *',
+                [name, access_token, refresh_token, email]
+            );
+            user = result.rows[0];
+        }
+
+        // 4. Create Session
+        (req.session as any).userId = user.id;
+        (req.session as any).user = user;
+
+        req.session.save((err) => {
+            if (err) {
+                console.error('Session save error:', err);
+                return res.status(500).send('Error saving session.');
+            }
+            res.redirect('/');
+        });
+
+    } catch (error: any) {
+        console.error('Google OAuth Exception:', error.response ? error.response.data : error.message);
+        res.status(500).send('Internal Server Error during Google Auth');
+    }
+});
 app.get('/account', requireAuth, (req, res) => {
     // Check tokens from the user object in session
     // (Ensure session user is up to date or fetch fresh?)
