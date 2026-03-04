@@ -6,22 +6,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Syncing - Unified Search</title>
     <link rel="stylesheet" href="/style.css">
+    <script>
+        window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+    </script>
+    <script defer src="/_vercel/insights/script.js"></script>
 </head>
 
 <body>
+    <!-- Background Effects -->
+    <div class="bg-glow"></div>
+    <div class="bg-glow-2"></div>
+
     <%- include('partials/header', { user: user }) %>
-        <div class="container">
-            <h1>Sync Status</h1>
-            <div class="card">
-                <p>Unified Search performs real-time queries. No data is stored persistently.</p>
-                <div class="sync-activity">
-                    <div class="activity-item">
-                        <span class="time">Now</span>
-                        <span class="message">System ready for queries.</span>
+        <main class="main-content container">
+            <h1 class="mb-8 font-heading">Sync Status</h1>
+
+            <div class="card-glass">
+                <p class="text-secondary mb-6 text-center" style="font-size: 1.1rem;">
+                    Unified Search performs real-time queries. No data is stored persistently.
+                </p>
+                <div class="flex flex-col gap-4">
+                    <div class="flex items-center gap-4"
+                        style="padding: 16px; background: var(--bg-elevated); border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
+                        <span class="badge badge-success">Now</span>
+                        <span class="font-semibold">System ready for queries.</span>
                     </div>
                 </div>
             </div>
-        </div>
+        </main>
 </body>
 
 </html>

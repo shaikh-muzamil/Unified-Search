@@ -1,18 +1,24 @@
-<header>
-    <nav class="navbar container">
+<header class="container">
+    <nav class="flex items-center justify-between">
         <div class="logo">
-            <a href="/" style="color: var(--text-primary); text-decoration: none;">Unified Search</a>
+            <a href="/">
+                <!-- Add a simple SVG icon for the logo -->
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--coral-bright);">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                Unified Search
+            </a>
         </div>
-        <ul class="nav-links">
+        <div class="flex items-center gap-6">
             <% if (user) { %>
-                <li><a href="/">Search</a></li>
-                <li><a href="/account">Account</a></li>
-                <li><a href="/logout" class="btn btn-secondary" style="padding: 8px 16px; font-size: 0.9rem;">Logout</a>
-                </li>
-                <% } else { %>
-                    <li><a href="/login" class="btn btn-secondary">Login</a></li>
-                    <li><a href="/signup" class="btn btn-primary">Sign Up</a></li>
-                    <% } %>
-        </ul>
+                <a href="/" class="text-secondary">Search</a>
+                <a href="/account" class="text-secondary">Account</a>
+                <a href="/logout" class="btn btn-secondary" style="padding: 8px 16px; font-size: 0.9rem;">Logout</a>
+            <% } else { %>
+                <a href="/login" class="text-secondary" style="font-weight: 500;">Login</a>
+                <a href="/signup" class="btn btn-primary" style="padding: 10px 20px; font-size: 0.9rem;">Sign Up</a>
+            <% } %>
+        </div>
     </nav>
 </header>

@@ -13,94 +13,92 @@
 </head>
 
 <body>
+    <!-- Background Effects -->
+    <div class="bg-glow"></div>
+    <div class="bg-glow-2"></div>
+
     <%- include('partials/header', { user: user }) %>
 
         <main class="main-content container">
-            <section class="hero" style="text-align: center; padding: 60px 0 40px;">
-                <h1 style="margin-bottom: 16px;">Unified Workspace Search</h1>
-                <p
-                    style="font-size: 1.25rem; color: var(--text-secondary); margin-bottom: 40px; max-width: 600px; margin-left: auto; margin-right: auto;">
-                    Seamlessly search across your Slack conversations and Notion documents in one place.
+            <section class="text-center mb-12">
+                <h1 class="mb-4 text-gradient">Unified Workspace Search</h1>
+                <p class="text-secondary text-center mb-12"
+                    style="font-size: 1.25rem; max-width: 600px; margin-left: auto; margin-right: auto;">
+                    Seamlessly search across your Slack conversations and Notion documents in one sleek place.
                 </p>
 
-                <form action="/search" method="GET" style="max-width: 600px; margin: 0 auto; position: relative;">
-                    <input type="text" name="q" placeholder="What are you looking for?" value="<%= query %>" required
-                        style="padding: 20px 24px; font-size: 1.1rem; border-radius: 50px; box-shadow: var(--shadow-soft); border: 1px solid transparent;">
-                    <button type="submit" class="btn btn-primary"
-                        style="position: absolute; right: 8px; top: 8px; bottom: 8px; border-radius: 40px; padding: 0 32px;">
-                        Search
-                    </button>
+                <form action="/search" method="GET" class="search-container">
+                    <div class="search-input-wrapper">
+                        <input type="text" name="q" class="search-input" placeholder="What are you looking for...?"
+                            value="<%= query %>" required autocomplete="off">
+                        <button type="submit" class="btn btn-primary" style="margin: 4px;">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                            </svg>
+                            Search
+                        </button>
+                    </div>
                 </form>
             </section>
 
             <% if (results) { %>
-                <div class="results-grid"
-                    style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 40px; margin-top: 40px;">
-
+                <div class="results-grid mt-8">
                     <!-- Slack Column -->
-                    <div class="column slack-column">
-                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 24px;">
+                    <div class="column">
+                        <div class="grid-column-title">
                             <span style="font-size: 1.5rem;">💬</span>
-                            <h3>Slack Results</h3>
+                            <h3 class="font-heading">Slack Results</h3>
                         </div>
 
                         <% if (results.slack && results.slack.length> 0) { %>
-                            <div style="display: flex; flex-direction: column; gap: 20px;">
+                            <div class="flex flex-col gap-4">
                                 <% results.slack.forEach(item=> { %>
-                                    <a href="<%= item.permalink %>" target="_blank" class="card"
-                                        style="display: block; text-decoration: none; color: inherit; padding: 24px;">
-                                        <div
-                                            style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-                                            <strong style="color: var(--text-primary);">
+                                    <a href="<%= item.permalink %>" target="_blank" class="card card-interactive">
+                                        <div class="flex items-center justify-between mb-4">
+                                            <strong class="font-semibold" style="color: #fff;">
                                                 <%= item.user %>
                                             </strong>
-                                            <span class="badge"
-                                                style="background: #E0E7FF; color: #3730A3; font-size: 0.75rem;">#<%=
-                                                    item.channel %></span>
+                                            <span class="badge badge-slack">#<%= item.channel %></span>
                                         </div>
-                                        <p
-                                            style="color: var(--text-secondary); margin-bottom: 16px; display: -webkit-box; -webkit-line-clamp: 3; line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
+                                        <p class="text-secondary mb-4 line-clamp-3" style="font-size: 0.95rem;">
                                             <%= item.text %>
                                         </p>
-                                        <span style="font-size: 0.85rem; color: #9CA3AF;">
+                                        <span class="text-muted text-sm">
                                             <%= new Date(item.ts * 1000).toLocaleDateString() %>
                                         </span>
                                     </a>
                                     <% }) %>
                             </div>
                             <% } else { %>
-                                <div class="card"
-                                    style="text-align: center; color: var(--text-secondary); padding: 40px;">
+                                <div class="card-glass text-center text-muted">
                                     No results found in Slack.
                                 </div>
                                 <% } %>
                     </div>
 
                     <!-- Notion Column -->
-                    <div class="column notion-column">
-                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 24px;">
+                    <div class="column">
+                        <div class="grid-column-title">
                             <span style="font-size: 1.5rem;">📝</span>
-                            <h3>Notion Results</h3>
+                            <h3 class="font-heading">Notion Results</h3>
                         </div>
 
                         <% if (results.notion && results.notion.length> 0) { %>
-                            <div style="display: flex; flex-direction: column; gap: 20px;">
+                            <div class="flex flex-col gap-4">
                                 <% results.notion.forEach(item=> { %>
-                                    <a href="<%= item.url %>" target="_blank" class="card"
-                                        style="display: block; text-decoration: none; color: inherit; padding: 24px;">
-                                        <div
-                                            style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 12px;">
+                                    <a href="<%= item.url %>" target="_blank" class="card card-interactive">
+                                        <div class="flex items-center gap-3 mb-4">
                                             <span style="font-size: 1.25rem;">
                                                 <%= item.icon || '📄' %>
                                             </span>
-                                            <strong
-                                                style="font-size: 1.1rem; color: var(--text-primary); line-height: 1.4;">
+                                            <strong class="font-semibold" style="font-size: 1.1rem; color: #fff;">
                                                 <%= item.title %>
                                             </strong>
                                         </div>
-                                        <div style="display: flex; gap: 8px;">
-                                            <span class="badge"
-                                                style="background: #F3E8FF; color: #6B21A8; font-size: 0.75rem;">
+                                        <div class="flex gap-2">
+                                            <span class="badge badge-notion">
                                                 <%= item.object %>
                                             </span>
                                         </div>
@@ -108,36 +106,31 @@
                                     <% }) %>
                             </div>
                             <% } else { %>
-                                <div class="card"
-                                    style="text-align: center; color: var(--text-secondary); padding: 40px;">
+                                <div class="card-glass text-center text-muted">
                                     No results found in Notion.
                                 </div>
                                 <% } %>
                     </div>
                 </div>
                 <% } else if (typeof recents !=='undefined' && recents && recents.length> 0) { %>
-                    <div style="max-width: 800px; margin: 40px auto;">
-                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 24px;">
+                    <div style="max-width: 800px; margin: 60px auto 0;">
+                        <div class="grid-column-title">
                             <span style="font-size: 1.5rem;">🕒</span>
-                            <h3>Recent Slack Activity</h3>
+                            <h3 class="font-heading">Recent Slack Activity</h3>
                         </div>
-                        <div style="display: flex; flex-direction: column; gap: 20px;">
+                        <div class="flex flex-col gap-4">
                             <% recents.forEach(item=> { %>
-                                <a href="<%= item.permalink %>" target="_blank" class="card"
-                                    style="display: block; text-decoration: none; color: inherit; padding: 24px;">
-                                    <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-                                        <strong style="color: var(--text-primary);">
+                                <a href="<%= item.permalink %>" target="_blank" class="card card-interactive">
+                                    <div class="flex items-center justify-between mb-4">
+                                        <strong class="font-semibold" style="color: #fff;">
                                             <%= item.user %>
                                         </strong>
-                                        <span class="badge"
-                                            style="background: #E0E7FF; color: #3730A3; font-size: 0.75rem;">#<%=
-                                                item.channel %></span>
+                                        <span class="badge badge-slack">#<%= item.channel %></span>
                                     </div>
-                                    <p
-                                        style="color: var(--text-secondary); margin-bottom: 16px; display: -webkit-box; -webkit-line-clamp: 3; line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
+                                    <p class="text-secondary mb-4 line-clamp-3" style="font-size: 0.95rem;">
                                         <%= item.text %>
                                     </p>
-                                    <span style="font-size: 0.85rem; color: #9CA3AF;">
+                                    <span class="text-muted text-sm">
                                         <%= new Date(parseFloat(item.ts) * 1000).toLocaleDateString() %>
                                             <%= new Date(parseFloat(item.ts) * 1000).toLocaleTimeString([],
                                                 {hour: '2-digit' , minute:'2-digit'}) %>
