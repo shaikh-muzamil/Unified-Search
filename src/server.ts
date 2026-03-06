@@ -366,7 +366,7 @@ GOOGLE_REDIRECT_URI=http://localhost:3000/auth/google/callback
         }
     }
 
-    const scope = encodeURIComponent('email profile https://www.googleapis.com/auth/drive.readonly https://www.googleapis.com/auth/gmail.readonly');
+    const scope = encodeURIComponent('email profile');
     const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${encodeURIComponent(clientId)}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${scope}&access_type=offline&prompt=consent`;
     res.redirect(url);
 });
@@ -434,6 +434,64 @@ app.get('/auth/google/callback', async (req, res) => {
     } catch (error: any) {
         console.error('Google OAuth Exception:', error.response ? error.response.data : error.message);
         res.status(500).send('Internal Server Error during Google Auth');
+    }
+});
+
+// Google Workspace Integration (Logged-in users connecting Drive & Gmail)
+app.get('/auth/workspace', requireAuth, (req, res) => {
+    const clientId = (process.env.GOOGLE_CLIENT_ID || '').trim();
+    // Using a new redirect URI for the workspace connection flow
+    const redirectUri = process.env.VERCEL || process.env.NODE_ENV === 'production'
+        ? 'https://' + req.get('host') + '/auth/workspace/callback'
+        : 'http://localhost:3000/auth/workspace/callback';
+
+    if (!clientId) {
+        return res.status(500).send('Google Client ID not configured.');
+    }
+
+    const scope = encodeURIComponent('https://www.googleapis.com/auth/drive.readonly https://www.googleapis.com/auth/gmail.readonly');
+    const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${encodeURIComponent(clientId)}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${scope}&access_type=offline&prompt=consent`;
+    res.redirect(url);
+});
+
+app.get('/auth/workspace/callback', requireAuth, async (req, res) => {
+    const { code } = req.query;
+    const userId = (req.session as any).userId;
+
+    if (!code) return res.status(400).send('No code received');
+
+    try {
+        const clientId = (process.env.GOOGLE_CLIENT_ID || '').trim();
+        const clientSecret = (process.env.GOOGLE_CLIENT_SECRET || '').trim();
+        const redirectUri = process.env.VERCEL || process.env.NODE_ENV === 'production'
+            ? 'https://' + req.get('host') + '/auth/workspace/callback'
+            : 'http://localhost:3000/auth/workspace/callback';
+
+        // Exchange code for tokens
+        const tokenResponse = await axios.post('https://oauth2.googleapis.com/token', {
+            code,
+            client_id: clientId,
+            client_secret: clientSecret,
+            redirect_uri: redirectUri,
+            grant_type: 'authorization_code'
+        });
+
+        const { access_token, refresh_token } = tokenResponse.data;
+
+        // Save tokens to the already logged-in user
+        await pool.query(
+            'UPDATE users SET google_access_token = $1, google_refresh_token = COALESCE($2, google_refresh_token) WHERE id = $3',
+            [access_token, refresh_token, userId]
+        );
+
+        // Update session
+        const userResult = await pool.query('SELECT * FROM users WHERE id = $1', [userId]);
+        (req.session as any).user = userResult.rows[0];
+
+        res.redirect('/account');
+    } catch (error: any) {
+        console.error('Google Workspace Exception:', error.response ? error.response.data : error.message);
+        res.status(500).send('Internal Server Error during Google Workspace Auth');
     }
 });
 app.get('/account', requireAuth, (req, res) => {
