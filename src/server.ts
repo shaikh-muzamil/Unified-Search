@@ -77,7 +77,9 @@ app.get('/debug', async (req, res) => {
                 HAS_POSTGRES_URL: !!process.env.POSTGRES_URL,
                 DB_URL_START: process.env.DATABASE_URL ? process.env.DATABASE_URL.substring(0, 10) : 'N/A',
                 SLACK_CLIENT_ID: !!process.env.SLACK_CLIENT_ID,
-                SLACK_REDIRECT_URI: process.env.SLACK_REDIRECT_URI
+                SLACK_REDIRECT_URI: process.env.SLACK_REDIRECT_URI,
+                GOOGLE_CLIENT_ID: !!process.env.GOOGLE_CLIENT_ID,
+                GOOGLE_REDIRECT_URI: process.env.GOOGLE_REDIRECT_URI
             }
         });
     } catch (e: any) {
