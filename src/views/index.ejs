@@ -111,6 +111,36 @@
                                 </div>
                                 <% } %>
                     </div>
+
+                    <!-- Google Drive Column -->
+                    <div class="column">
+                        <div class="grid-column-title">
+                            <span style="font-size: 1.5rem;">📁</span>
+                            <h3 class="font-heading">Google Drive Results</h3>
+                        </div>
+
+                        <% if (results.googleDrive && results.googleDrive.length> 0) { %>
+                            <div class="flex flex-col gap-4">
+                                <% results.googleDrive.forEach(item=> { %>
+                                    <a href="<%= item.url %>" target="_blank" class="card card-interactive">
+                                        <div class="flex items-center gap-3 mb-4">
+                                            <span style="font-size: 1.25rem; display: flex;">
+                                                <img src="<%= item.icon %>" alt="icon"
+                                                    style="width: 20px; height: 20px;" />
+                                            </span>
+                                            <strong class="font-semibold" style="font-size: 1.1rem; color: #fff;">
+                                                <%= item.title %>
+                                            </strong>
+                                        </div>
+                                    </a>
+                                    <% }) %>
+                            </div>
+                            <% } else { %>
+                                <div class="card-glass text-center text-muted">
+                                    No results found in Google Drive.
+                                </div>
+                                <% } %>
+                    </div>
                 </div>
                 <% } else if (typeof recents !=='undefined' && recents && recents.length> 0) { %>
                     <div style="max-width: 800px; margin: 60px auto 0;">

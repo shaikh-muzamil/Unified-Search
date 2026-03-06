@@ -7,6 +7,7 @@ import connectPgSimple from 'connect-pg-simple';
 import { initDB, pool } from './database';
 import { searchSlack, getRecentMessages } from './services/slack';
 import { searchNotion } from './services/notion';
+import { searchGoogleDrive } from './services/googleDrive';
 import axios from 'axios';
 
 // Explicitly load .env
@@ -126,11 +127,12 @@ app.get('/search', requireAuth, async (req, res) => {
     if (!query) return res.render('index', { user, results: null, query: '' });
 
     try {
-        const [slackResults, notionResults] = await Promise.all([
+        const [slackResults, notionResults, googleDriveResults] = await Promise.all([
             searchSlack(query, user.slack_access_token),
-            searchNotion(query, user.notion_access_token)
+            searchNotion(query, user.notion_access_token),
+            user.google_access_token ? searchGoogleDrive(query, user.google_access_token) : Promise.resolve([])
         ]);
-        res.render('index', { user, results: { slack: slackResults, notion: notionResults }, query });
+        res.render('index', { user, results: { slack: slackResults, notion: notionResults, googleDrive: googleDriveResults }, query });
     } catch (error) {
         console.error("Search failed:", error);
         res.render('index', { user, results: null, error: "Search failed.", query });
@@ -321,11 +323,21 @@ app.get('/auth/google', (req, res) => {
     const redirectUri = (process.env.GOOGLE_REDIRECT_URI || '').trim();
 
     if (!clientId || !redirectUri) {
-        return res.status(500).send('Google App Credentials not configured. Please add GOOGLE_CLIENT_ID and GOOGLE_REDIRECT_URI to your .env.');
+        return res.status(500).send(`
+            <h2>Google App Credentials Not Configured</h2>
+            <p>Please open the <code>.env</code> file in the root directory (<code>d:\\Prism Startup\\.env</code>) and add your keys:</p>
+            <pre style="background: #f4f4f4; padding: 15px; border-radius: 5px;">
+GOOGLE_CLIENT_ID=your_client_id_here
+GOOGLE_CLIENT_SECRET=your_client_secret_here
+GOOGLE_REDIRECT_URI=http://localhost:3000/auth/google/callback
+            </pre>
+            <p>Then restart the server.</p>
+            <a href="/login">&larr; Back to login</a>
+        `);
     }
 
-    const scope = encodeURIComponent('email profile');
-    const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${encodeURIComponent(clientId)}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${scope}&access_type=offline`;
+    const scope = encodeURIComponent('email profile https://www.googleapis.com/auth/drive.readonly');
+    const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${encodeURIComponent(clientId)}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${scope}&access_type=offline&prompt=consent`;
     res.redirect(url);
 });
 
@@ -403,7 +415,8 @@ app.get('/account', requireAuth, (req, res) => {
     res.render('account', {
         user: user,
         slackConnected: !!user.slack_access_token,
-        notionConnected: !!user.notion_access_token
+        notionConnected: !!user.notion_access_token,
+        googleConnected: !!user.google_access_token
     });
 });
 
