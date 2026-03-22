@@ -131,19 +131,15 @@ app.get('/search', requireAuth, async (req, res) => {
     if (!query) return res.render('index', { user, results: null, query: '' });
 
     try {
-        const [slackResults, notionResults, googleDriveResults, gmailResults] = await Promise.all([
+        const [slackResults, notionResults] = await Promise.all([
             searchSlack(query, user.slack_access_token),
-            searchNotion(query, user.notion_access_token),
-            user.google_access_token ? searchGoogleDrive(query, user.google_access_token) : Promise.resolve([]),
-            user.google_access_token ? searchGmail(query, user.google_access_token) : Promise.resolve([])
+            searchNotion(query, user.notion_access_token)
         ]);
         res.render('index', {
             user,
             results: {
                 slack: slackResults,
-                notion: notionResults,
-                googleDrive: googleDriveResults,
-                gmail: gmailResults
+                notion: notionResults
             },
             query
         });

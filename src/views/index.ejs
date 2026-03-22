@@ -48,7 +48,7 @@
                     <!-- Slack Column -->
                     <div class="column">
                         <div class="grid-column-title">
-                            <span style="font-size: 1.5rem;">💬</span>
+                            <span style="display: flex; align-items: center;"><svg width="24" height="24" viewBox="0 0 24 24" fill="var(--slack)"><path d="M5.042 15.165a2.528 2.528 0 0 1-2.52 2.523A2.528 2.528 0 0 1 0 15.165a2.527 2.527 0 0 1 2.522-2.52h2.52v2.52zM6.313 15.165a2.527 2.527 0 0 1 2.521-2.523 2.527 2.527 0 0 1 2.521 2.523v6.313A2.528 2.528 0 0 1 8.834 24a2.528 2.528 0 0 1-2.521-2.522v-6.313zM8.834 5.042a2.528 2.528 0 0 1-2.521-2.52A2.528 2.528 0 0 1 8.834 0a2.528 2.528 0 0 1 2.521 2.522v2.52H8.834zM8.834 6.313a2.528 2.528 0 0 1 2.521 2.521 2.528 2.528 0 0 1-2.521 2.521H2.522A2.528 2.528 0 0 1 0 8.834a2.528 2.528 0 0 1 2.522-2.521h6.312zM18.956 8.834a2.528 2.528 0 0 1 2.522-2.521A2.528 2.528 0 0 1 24 8.834a2.528 2.528 0 0 1-2.522 2.521h-2.522V8.834zM17.688 8.834a2.528 2.528 0 0 1-2.523 2.521 2.527 2.527 0 0 1-2.52-2.521V2.522A2.527 2.527 0 0 1 15.165 0a2.528 2.528 0 0 1 2.523 2.522v6.312zM15.165 18.956a2.528 2.528 0 0 1 2.523 2.522A2.528 2.528 0 0 1 15.165 24a2.527 2.527 0 0 1-2.52-2.522v-2.522h2.52zM15.165 17.688a2.527 2.527 0 0 1-2.523-2.523 2.526 2.526 0 0 1 2.52-2.52h6.313A2.527 2.527 0 0 1 24 15.165a2.528 2.528 0 0 1-2.522 2.523h-6.313z"/></svg></span>
                             <h3 class="font-heading">Slack Results</h3>
                         </div>
 
@@ -81,7 +81,7 @@
                     <!-- Notion Column -->
                     <div class="column">
                         <div class="grid-column-title">
-                            <span style="font-size: 1.5rem;">📝</span>
+                            <span style="display: flex; align-items: center;"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M4.459 4.208c.745-.186 1.118-.558 1.118-1.118V1.6H2.04v1.49c0 .56.373.932 1.118 1.118.56.111.932.373.932.932v12.288c0 .56-.372.932-.932 1.118-.745.186-1.118.56-1.118 1.118v1.49h7.45v-1.49c0-.558-.372-.932-1.118-1.118-.56-.186-.932-.558-.932-1.118V6.816l8.94 11.73h2.61V6.257c0-.56.372-.932 1.117-1.118.746-.186 1.118-.558 1.118-1.118V2.53h-7.078v1.49c0 .56.373.932 1.118 1.118.56.186.932.558.932 1.118v10.424L6.694 4.58H4.46v-.372z"/></svg></span>
                             <h3 class="font-heading">Notion Results</h3>
                         </div>
 
@@ -112,74 +112,11 @@
                                 <% } %>
                     </div>
 
-                    <!-- Google Drive Column -->
-                    <div class="column">
-                        <div class="grid-column-title">
-                            <span style="font-size: 1.5rem;">📁</span>
-                            <h3 class="font-heading">Google Drive Results</h3>
-                        </div>
-
-                        <% if (results.googleDrive && results.googleDrive.length> 0) { %>
-                            <div class="flex flex-col gap-4">
-                                <% results.googleDrive.forEach(item=> { %>
-                                    <a href="<%= item.url %>" target="_blank" class="card card-interactive" style="border-left: 3px solid var(--drive);">
-                                        <div class="flex items-center gap-3 mb-2">
-                                            <span style="font-size: 1.25rem; display: flex;">
-                                                📄
-                                            </span>
-                                            <strong class="font-semibold" style="font-size: 1.1rem; color: var(--text-1);">
-                                                <%= item.title %>
-                                            </strong>
-                                        </div>
-                                        <p class="text-secondary mb-2" style="font-size: 0.85rem;">
-                                            <%= item.description %>
-                                        </p>
-                                    </a>
-                                    <% }) %>
-                            </div>
-                            <% } else { %>
-                                <div class="card-glass text-center text-muted">
-                                    No results found in Google Drive.
-                                </div>
-                                <% } %>
                     </div>
-
-                    <!-- Gmail Column -->
-                    <div class="column">
-                        <div class="grid-column-title">
-                            <span style="font-size: 1.5rem;">📧</span>
-                            <h3 class="font-heading">Gmail Results</h3>
-                        </div>
-
-                        <% if (results.gmail && results.gmail.length> 0) { %>
-                            <div class="flex flex-col gap-4">
-                                <% results.gmail.forEach(item=> { %>
-                                    <a href="<%= item.url %>" target="_blank" class="card card-interactive" style="border-left: 3px solid var(--gmail);">
-                                        <div class="flex items-center gap-3 mb-2">
-                                            <strong class="font-semibold" style="font-size: 1.05rem; color: var(--text-1);">
-                                                <%= item.title %>
-                                            </strong>
-                                        </div>
-                                        <p class="text-secondary mb-3 line-clamp-3" style="font-size: 0.95rem;">
-                                            <%= item.description %>
-                                        </p>
-                                        <span class="text-muted text-sm">
-                                            <%= new Date(item.timestamp).toLocaleDateString() %>
-                                        </span>
-                                    </a>
-                                    <% }) %>
-                            </div>
-                            <% } else { %>
-                                <div class="card-glass text-center text-muted">
-                                    No results found in Gmail.
-                                </div>
-                                <% } %>
-                    </div>
-                </div>
                 <% } else if (typeof recents !=='undefined' && recents && recents.length> 0) { %>
                     <div style="max-width: 800px; margin: 60px auto 0;">
                         <div class="grid-column-title">
-                            <span style="font-size: 1.5rem;">🕒</span>
+                            <span style="display: flex; align-items: center;"><svg width="24" height="24" viewBox="0 0 24 24" fill="var(--slack)"><path d="M5.042 15.165a2.528 2.528 0 0 1-2.52 2.523A2.528 2.528 0 0 1 0 15.165a2.527 2.527 0 0 1 2.522-2.52h2.52v2.52zM6.313 15.165a2.527 2.527 0 0 1 2.521-2.523 2.527 2.527 0 0 1 2.521 2.523v6.313A2.528 2.528 0 0 1 8.834 24a2.528 2.528 0 0 1-2.521-2.522v-6.313zM8.834 5.042a2.528 2.528 0 0 1-2.521-2.52A2.528 2.528 0 0 1 8.834 0a2.528 2.528 0 0 1 2.521 2.522v2.52H8.834zM8.834 6.313a2.528 2.528 0 0 1 2.521 2.521 2.528 2.528 0 0 1-2.521 2.521H2.522A2.528 2.528 0 0 1 0 8.834a2.528 2.528 0 0 1 2.522-2.521h6.312zM18.956 8.834a2.528 2.528 0 0 1 2.522-2.521A2.528 2.528 0 0 1 24 8.834a2.528 2.528 0 0 1-2.522 2.521h-2.522V8.834zM17.688 8.834a2.528 2.528 0 0 1-2.523 2.521 2.527 2.527 0 0 1-2.52-2.521V2.522A2.527 2.527 0 0 1 15.165 0a2.528 2.528 0 0 1 2.523 2.522v6.312zM15.165 18.956a2.528 2.528 0 0 1 2.523 2.522A2.528 2.528 0 0 1 15.165 24a2.527 2.527 0 0 1-2.52-2.522v-2.522h2.52zM15.165 17.688a2.527 2.527 0 0 1-2.523-2.523 2.526 2.526 0 0 1 2.52-2.52h6.313A2.527 2.527 0 0 1 24 15.165a2.528 2.528 0 0 1-2.522 2.523h-6.313z"/></svg></span>
                             <h3 class="font-heading">Recent Slack Activity</h3>
                         </div>
                         <div class="flex flex-col gap-4">
