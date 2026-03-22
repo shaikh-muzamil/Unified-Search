@@ -75,12 +75,7 @@
         <div class="container flex items-center justify-between">
             <a href="/" class="font-heading font-bold text-xl flex items-center gap-2"
                 style="color: var(--text-primary); text-decoration: none;">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round" style="color: var(--coral-bright);">
-                    <circle cx="11" cy="11" r="8"></circle>
-                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                </svg>
-                Prism
+                <img id="logo-img" src="/05_prism_white_knockout.jpg" alt="Prism Logo" style="height: 32px; width: auto; object-fit: contain;">
             </a>
             <div class="flex items-center gap-6">
                 <!-- Theme Toggle Button -->
@@ -250,12 +245,15 @@
             const iconMoon = document.getElementById('icon-moon');
 
             function updateIcon(theme) {
+                const logoImg = document.getElementById('logo-img');
                 if (theme === 'light') {
                     if (iconSun) iconSun.style.display = 'none';
                     if (iconMoon) iconMoon.style.display = 'block';
+                    if (logoImg) logoImg.src = '/01_prism_full_color.jpg';
                 } else {
                     if (iconSun) iconSun.style.display = 'block';
                     if (iconMoon) iconMoon.style.display = 'none';
+                    if (logoImg) logoImg.src = '/05_prism_white_knockout.jpg';
                 }
             }
 
