@@ -1,0 +1,194 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+.root{font-family:var(--font-sans);padding:1rem 0 2rem}
+.lbl{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--color-text-tertiary);margin-bottom:12px;margin-top:20px}
+.lbl:first-child{margin-top:0}
+.swatch-row{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:20px}
+.swatch-cell{display:flex;flex-direction:column;align-items:center;gap:5px;min-width:72px}
+.swatch{width:72px;height:52px;border-radius:10px}
+.sw-name{font-size:11px;font-weight:500;color:var(--color-text-primary);text-align:center}
+.sw-hex{font-size:10px;font-family:var(--font-mono);color:var(--color-text-secondary);text-align:center}
+.sw-use{font-size:9px;color:var(--color-text-tertiary);text-align:center;line-height:1.4}
+.divider{height:.5px;background:var(--color-border-tertiary);margin:20px 0}
+.token-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px}
+.token-card{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:12px 14px}
+.token-name{font-size:11px;font-family:var(--font-mono);color:#7c3aed;margin-bottom:2px}
+.token-val{font-size:13px;font-weight:500;color:var(--color-text-primary)}
+.token-use{font-size:11px;color:var(--color-text-secondary);margin-top:3px}
+.code-block{background:#0f0a1e;border-radius:var(--border-radius-lg);padding:16px 18px;overflow-x:auto;margin-bottom:12px}
+.code-block pre{font-family:var(--font-mono);font-size:12px;color:#c4b5fd;line-height:1.7;white-space:pre}
+.code-block .k{color:#a78bfa}
+.code-block .v{color:#86efac}
+.code-block .c{color:#4b5563}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px}
+.tab{padding:6px 14px;border-radius:999px;border:.5px solid var(--color-border-secondary);font-size:12px;cursor:pointer;background:transparent;color:var(--color-text-secondary);transition:all .15s}
+.tab.active{background:#7c3aed;color:white;border-color:#7c3aed}
+.panel{display:none}.panel.active{display:block}
+.int-row{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:var(--border-radius-md);background:var(--color-background-secondary);margin-bottom:8px}
+.int-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.int-name{font-size:13px;font-weight:500;color:var(--color-text-primary);width:80px}
+.int-hex{font-family:var(--font-mono);font-size:11px;color:var(--color-text-secondary);width:80px}
+.int-use{font-size:11px;color:var(--color-text-tertiary)}
+</style>
+<div class="root">
+<div class="tabs">
+  <button class="tab active" onclick="sw('palette')">Color palette</button>
+  <button class="tab" onclick="sw('tokens')">Design tokens</button>
+  <button class="tab" onclick="sw('integrations')">Integration colors</button>
+  <button class="tab" onclick="sw('css')">CSS / Tailwind code</button>
+</div>
+
+<div class="panel active" id="panel-palette">
+  <p class="lbl">Core brand — primary palette</p>
+  <div class="swatch-row">
+    <div class="swatch-cell"><div class="swatch" style="background:#0f0a1e;border:1px solid #1e1040"></div><div class="sw-name">Night</div><div class="sw-hex">#0f0a1e</div><div class="sw-use">App background</div></div>
+    <div class="swatch-cell"><div class="swatch" style="background:#1a1040"></div><div class="sw-name">Deep</div><div class="sw-hex">#1a1040</div><div class="sw-use">Sidebar, panels</div></div>
+    <div class="swatch-cell"><div class="swatch" style="background:#2d1b69"></div><div class="sw-name">Abyss</div><div class="sw-hex">#2d1b69</div><div class="sw-use">Hover states</div></div>
+    <div class="swatch-cell"><div class="swatch" style="background:#4c1d95"></div><div class="sw-name">Midnight</div><div class="sw-hex">#4c1d95</div><div class="sw-use">Active nav</div></div>
+    <div class="swatch-cell"><div class="swatch" style="background:#7c3aed"></div><div class="sw-name">Prism</div><div class="sw-hex">#7c3aed</div><div class="sw-use">Primary CTA, buttons</div></div>
+    <div class="swatch-cell"><div class="swatch" style="background:#a78bfa"></div><div class="sw-name">Violet</div><div class="sw-hex">#a78bfa</div><div class="sw-use">Links, accents</div></div>
+    <div class="swatch-cell"><div class="swatch" style="background:#c4b5fd"></div><div class="sw-name">Lavender</div><div class="sw-hex">#c4b5fd</div><div class="sw-use">Muted text on dark</div></div>
+    <div class="swatch-cell"><div class="swatch" style="background:#ddd6fe"></div><div class="sw-name">Soft</div><div class="sw-hex">#ddd6fe</div><div class="sw-use">Dividers on dark</div></div>
+    <div class="swatch-cell"><div class="swatch" style="background:#ede9fe;border:.5px solid #ddd6fe"></div><div class="sw-name">Mist</div><div class="sw-hex">#ede9fe</div><div class="sw-use">Light tint bg</div></div>
+  </div>
+
+  <p class="lbl">Surface colors — cards, inputs, panels</p>
+  <div class="swatch-row">
+    <div class="swatch-cell"><div class="swatch" style="background:#130d2a"></div><div class="sw-name">Surface 1</div><div class="sw-hex">#130d2a</div><div class="sw-use">Card background</div></div>
+    <div class="swatch-cell"><div class="swatch" style="background:#1e1b4b"></div><div class="sw-name">Surface 2</div><div class="sw-hex">#1e1b4b</div><div class="sw-use">Input field bg</div></div>
+    <div class="swatch-cell"><div class="swatch" style="background:#312e81"></div><div class="sw-name">Surface 3</div><div class="sw-hex">#312e81</div><div class="sw-use">Selected / active card</div></div>
+    <div class="swatch-cell"><div class="swatch" style="background:#3730a3"></div><div class="sw-name">Border active</div><div class="sw-hex">#3730a3</div><div class="sw-use">Focused input border</div></div>
+    <div class="swatch-cell"><div class="swatch" style="background:#ffffff"></div><div class="sw-name">White</div><div class="sw-hex">#ffffff</div><div class="sw-use">Primary text on dark</div></div>
+    <div class="swatch-cell"><div class="swatch" style="background:#9ca3af"></div><div class="sw-name">Muted</div><div class="sw-hex">#9ca3af</div><div class="sw-use">Secondary text</div></div>
+    <div class="swatch-cell"><div class="swatch" style="background:#6b7280"></div><div class="sw-name">Dim</div><div class="sw-hex">#6b7280</div><div class="sw-use">Placeholder text</div></div>
+    <div class="swatch-cell"><div class="swatch" style="background:#374151"></div><div class="sw-name">Border</div><div class="sw-hex">#374151</div><div class="sw-use">Card borders</div></div>
+  </div>
+
+  <p class="lbl">Semantic — status & signals</p>
+  <div class="swatch-row">
+    <div class="swatch-cell"><div class="swatch" style="background:#22c55e"></div><div class="sw-name">Success</div><div class="sw-hex">#22c55e</div><div class="sw-use">Connected, synced</div></div>
+    <div class="swatch-cell"><div class="swatch" style="background:#15803d"></div><div class="sw-name">Success dark</div><div class="sw-hex">#15803d</div><div class="sw-use">Success hover</div></div>
+    <div class="swatch-cell"><div class="swatch" style="background:#f59e0b"></div><div class="sw-name">Warning</div><div class="sw-hex">#f59e0b</div><div class="sw-use">Re-auth needed</div></div>
+    <div class="swatch-cell"><div class="swatch" style="background:#ef4444"></div><div class="sw-name">Danger</div><div class="sw-hex">#ef4444</div><div class="sw-use">Disconnected, error</div></div>
+    <div class="swatch-cell"><div class="swatch" style="background:#06b6d4"></div><div class="sw-name">Info</div><div class="sw-hex">#06b6d4</div><div class="sw-use">Indexing, syncing</div></div>
+    <div class="swatch-cell"><div class="swatch" style="background:#f472b6"></div><div class="sw-name">AI pink</div><div class="sw-hex">#f472b6</div><div class="sw-use">AI answer strip</div></div>
+  </div>
+</div>
+
+<div class="panel" id="panel-tokens">
+  <p class="lbl">Semantic design tokens — use these names in your code, never raw hex</p>
+  <div class="token-grid">
+    <div class="token-card"><div class="token-name">--color-bg-app</div><div class="token-val">#0f0a1e</div><div class="token-use">Root page background</div></div>
+    <div class="token-card"><div class="token-name">--color-bg-sidebar</div><div class="token-val">#1a1040</div><div class="token-use">Left nav panel</div></div>
+    <div class="token-card"><div class="token-name">--color-bg-card</div><div class="token-val">#130d2a</div><div class="token-use">Search result cards, panels</div></div>
+    <div class="token-card"><div class="token-name">--color-bg-input</div><div class="token-val">#1e1b4b</div><div class="token-use">Search bar, form fields</div></div>
+    <div class="token-card"><div class="token-name">--color-bg-hover</div><div class="token-val">#2d1b69</div><div class="token-use">Card hover state</div></div>
+    <div class="token-card"><div class="token-name">--color-bg-selected</div><div class="token-val">#312e81</div><div class="token-use">Active nav item, selected card</div></div>
+    <div class="token-card"><div class="token-name">--color-primary</div><div class="token-val">#7c3aed</div><div class="token-use">Buttons, badges, focus rings</div></div>
+    <div class="token-card"><div class="token-name">--color-primary-hover</div><div class="token-val">#6d28d9</div><div class="token-use">Button hover</div></div>
+    <div class="token-card"><div class="token-name">--color-accent</div><div class="token-val">#a78bfa</div><div class="token-use">Links, icons, highlights</div></div>
+    <div class="token-card"><div class="token-name">--color-text-primary</div><div class="token-val">#ffffff</div><div class="token-use">Headlines, body text</div></div>
+    <div class="token-card"><div class="token-name">--color-text-secondary</div><div class="token-val">#c4b5fd</div><div class="token-use">Subtitles, meta info</div></div>
+    <div class="token-card"><div class="token-name">--color-text-muted</div><div class="token-val">#9ca3af</div><div class="token-use">Timestamps, captions</div></div>
+    <div class="token-card"><div class="token-name">--color-text-placeholder</div><div class="token-val">#6b7280</div><div class="token-use">Input placeholder text</div></div>
+    <div class="token-card"><div class="token-name">--color-border</div><div class="token-val">#374151</div><div class="token-use">Card borders, dividers</div></div>
+    <div class="token-card"><div class="token-name">--color-border-active</div><div class="token-val">#7c3aed</div><div class="token-use">Focused input border</div></div>
+    <div class="token-card"><div class="token-name">--color-success</div><div class="token-val">#22c55e</div><div class="token-use">Connected, live status dot</div></div>
+    <div class="token-card"><div class="token-name">--color-warning</div><div class="token-val">#f59e0b</div><div class="token-use">Needs re-auth badge</div></div>
+    <div class="token-card"><div class="token-name">--color-danger</div><div class="token-val">#ef4444</div><div class="token-use">Error, disconnected</div></div>
+    <div class="token-card"><div class="token-name">--color-info</div><div class="token-val">#06b6d4</div><div class="token-use">Indexing spinner, sync badge</div></div>
+    <div class="token-card"><div class="token-name">--color-ai</div><div class="token-val">#f472b6</div><div class="token-use">AI answer highlight strip</div></div>
+    <div class="token-card"><div class="token-name">--radius-sm</div><div class="token-val">6px</div><div class="token-use">Badges, pills, tags</div></div>
+    <div class="token-card"><div class="token-name">--radius-md</div><div class="token-val">10px</div><div class="token-use">Buttons, inputs, small cards</div></div>
+    <div class="token-card"><div class="token-name">--radius-lg</div><div class="token-val">16px</div><div class="token-use">Main cards, modals</div></div>
+    <div class="token-card"><div class="token-name">--radius-xl</div><div class="token-val">999px</div><div class="token-use">Search bar pill, avatars</div></div>
+  </div>
+</div>
+
+<div class="panel" id="panel-integrations">
+  <p class="lbl">Integration brand colors — use these for source badges and dots</p>
+  <div class="int-row"><div class="int-dot" style="background:#4a154b"></div><div class="int-name">Slack</div><div class="int-hex">#4a154b</div><div class="int-use">Slack badge background</div></div>
+  <div class="int-row"><div class="int-dot" style="background:#ffffff;border:1px solid #374151"></div><div class="int-name">Notion</div><div class="int-hex">#ffffff</div><div class="int-use">White badge, dark border</div></div>
+  <div class="int-row"><div class="int-dot" style="background:#ea4335"></div><div class="int-name">Gmail</div><div class="int-hex">#ea4335</div><div class="int-use">Coming soon</div></div>
+  <div class="int-row"><div class="int-dot" style="background:#1f883d"></div><div class="int-name">GitHub</div><div class="int-hex">#1f883d</div><div class="int-use">Coming soon</div></div>
+  <div class="int-row"><div class="int-dot" style="background:#5865f2"></div><div class="int-name">Discord</div><div class="int-hex">#5865f2</div><div class="int-use">Coming soon</div></div>
+  <div class="int-row"><div class="int-dot" style="background:#ef4444"></div><div class="int-name">Obsidian</div><div class="int-hex">#ef4444</div><div class="int-use">Coming soon</div></div>
+  <div class="int-row"><div class="int-dot" style="background:#0078d4"></div><div class="int-name">Teams</div><div class="int-hex">#0078d4</div><div class="int-use">Coming soon</div></div>
+  <div class="int-row"><div class="int-dot" style="background:#25d366"></div><div class="int-name">WhatsApp</div><div class="int-hex">#25d366</div><div class="int-use">Coming soon</div></div>
+  <p style="font-size:12px;color:var(--color-text-secondary);margin-top:12px;line-height:1.6;">Rule: each result card gets a 3px left border in its integration color. The badge pill uses 15% opacity of the brand color as background, full color as text — so it reads on the dark card surface without overwhelming it.</p>
+</div>
+
+<div class="panel" id="panel-css">
+  <p class="lbl">CSS custom properties — paste into your root stylesheet</p>
+  <div class="code-block"><pre><span class="c">/* prism design tokens */</span>
+<span class="k">:root</span> {
+  <span class="c">/* backgrounds */</span>
+  <span class="k">--bg-app</span>:       <span class="v">#0f0a1e</span>;
+  <span class="k">--bg-sidebar</span>:   <span class="v">#1a1040</span>;
+  <span class="k">--bg-card</span>:      <span class="v">#130d2a</span>;
+  <span class="k">--bg-input</span>:     <span class="v">#1e1b4b</span>;
+  <span class="k">--bg-hover</span>:     <span class="v">#2d1b69</span>;
+  <span class="k">--bg-selected</span>:  <span class="v">#312e81</span>;
+
+  <span class="c">/* brand */</span>
+  <span class="k">--primary</span>:      <span class="v">#7c3aed</span>;
+  <span class="k">--primary-h</span>:    <span class="v">#6d28d9</span>;
+  <span class="k">--accent</span>:       <span class="v">#a78bfa</span>;
+  <span class="k">--accent-dim</span>:   <span class="v">#c4b5fd</span>;
+
+  <span class="c">/* text */</span>
+  <span class="k">--text-1</span>:       <span class="v">#ffffff</span>;
+  <span class="k">--text-2</span>:       <span class="v">#c4b5fd</span>;
+  <span class="k">--text-3</span>:       <span class="v">#9ca3af</span>;
+  <span class="k">--text-ph</span>:      <span class="v">#6b7280</span>;
+
+  <span class="c">/* borders */</span>
+  <span class="k">--border</span>:       <span class="v">#374151</span>;
+  <span class="k">--border-focus</span>: <span class="v">#7c3aed</span>;
+
+  <span class="c">/* semantic */</span>
+  <span class="k">--success</span>:      <span class="v">#22c55e</span>;
+  <span class="k">--warning</span>:      <span class="v">#f59e0b</span>;
+  <span class="k">--danger</span>:       <span class="v">#ef4444</span>;
+  <span class="k">--info</span>:         <span class="v">#06b6d4</span>;
+  <span class="k">--ai</span>:           <span class="v">#f472b6</span>;
+
+  <span class="c">/* radii */</span>
+  <span class="k">--r-sm</span>:  <span class="v">6px</span>;
+  <span class="k">--r-md</span>:  <span class="v">10px</span>;
+  <span class="k">--r-lg</span>:  <span class="v">16px</span>;
+  <span class="k">--r-pill</span>:<span class="v"> 999px</span>;
+}</pre></div>
+
+  <p class="lbl">Tailwind config — extend section</p>
+  <div class="code-block"><pre><span class="c">// tailwind.config.js</span>
+<span class="k">colors</span>: {
+  prism: {
+    night:    <span class="v">'#0f0a1e'</span>,
+    deep:     <span class="v">'#1a1040'</span>,
+    card:     <span class="v">'#130d2a'</span>,
+    input:    <span class="v">'#1e1b4b'</span>,
+    hover:    <span class="v">'#2d1b69'</span>,
+    selected: <span class="v">'#312e81'</span>,
+    DEFAULT:  <span class="v">'#7c3aed'</span>,
+    light:    <span class="v">'#a78bfa'</span>,
+    dim:      <span class="v">'#c4b5fd'</span>,
+    mist:     <span class="v">'#ede9fe'</span>,
+  },
+  success: <span class="v">'#22c55e'</span>,
+  warning: <span class="v">'#f59e0b'</span>,
+  danger:  <span class="v">'#ef4444'</span>,
+  info:    <span class="v">'#06b6d4'</span>,
+  ai:      <span class="v">'#f472b6'</span>,
+}</pre></div>
+</div>
+</div>
+<script>
+function sw(id){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('panel-'+id).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
