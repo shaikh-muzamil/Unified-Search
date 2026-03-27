@@ -157,6 +157,13 @@ app.get('/search', requireAuth, async (req, res) => {
         // Run AI synthesis concurrently after results are fetched
         const aiSummary = await synthesizeAnswer(query, slackResults, notionResults);
 
+        // Track search metrics asynchronously (fire and forget)
+        pool.query(
+            `INSERT INTO search_metrics (user_id, query, slack_results_count, notion_results_count) 
+             VALUES ($1, $2, $3, $4)`,
+            [user.id, query, slackResults.length, notionResults.length]
+        ).catch(err => console.error('Error logging search metrics:', err));
+
         res.render('index', {
             user,
             results: {
@@ -543,7 +550,7 @@ app.get('/api/cron/weekly-digest', async (req, res) => {
     try {
         // Get all users with Slack connected and an email
         const { rows: users } = await pool.query(
-            `SELECT id, email, name, slack_access_token
+            `SELECT id, email, name, slack_access_token, notion_access_token, google_access_token
              FROM users
              WHERE slack_access_token IS NOT NULL
                AND email IS NOT NULL`
@@ -553,13 +560,14 @@ app.get('/api/cron/weekly-digest', async (req, res) => {
 
         for (const user of users) {
             try {
-                const summary = await generateDigestForUser(user);
-                if (!summary) {
+                const digestData = await generateDigestForUser(user as any);
+                if (!digestData) {
                     results.push({ email: user.email, status: 'skipped (no content)' });
                     continue;
                 }
 
-                const sent = await sendDigestEmail(user.email, user.name || 'there', summary, weekOf);
+                const { summary, stats } = digestData;
+                const sent = await sendDigestEmail(user.email, user.name || 'there', summary, weekOf, stats);
                 results.push({ email: user.email, status: sent ? 'sent' : 'failed' });
             } catch (err: any) {
                 results.push({ email: user.email, status: `error: ${err.message}` });

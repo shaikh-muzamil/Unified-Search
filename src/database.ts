@@ -62,7 +62,6 @@ export const initDB = async () => {
         }
 
         // Session table for connect-pg-simple
-        // Session table for connect-pg-simple
         // Using a simpler robust query that doesn't fail if table exists
         await pool.query(`
             CREATE TABLE IF NOT EXISTS session(
@@ -72,6 +71,19 @@ export const initDB = async () => {
             CONSTRAINT session_pkey PRIMARY KEY(sid)
         );
             CREATE INDEX IF NOT EXISTS IDX_session_expire ON session(expire);
+        `);
+
+        // Search metrics table for Weekly Digest logic
+        await pool.query(`
+            CREATE TABLE IF NOT EXISTS search_metrics (
+                id SERIAL PRIMARY KEY,
+                user_id INT,
+                query TEXT,
+                slack_results_count INT DEFAULT 0,
+                notion_results_count INT DEFAULT 0,
+                google_results_count INT DEFAULT 0,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
         `);
 
 
