@@ -79,11 +79,43 @@
                 Prism brings your Slack conversations and Notion documents into one powerful, unified search experience.
                 Stop digging, start finding.
             </p>
-            <div class="flex items-center justify-center gap-4">
-                <a href="/signup" class="btn btn-primary" style="font-size: 1.1rem; padding: 16px 32px;">Get Started for
-                    Free</a>
+
+            <!-- Demo Search Bar -->
+            <form action="/demo" method="GET" class="search-container" style="max-width: 640px; margin: 0 auto 16px;">
+                <div class="search-input-wrapper">
+                    <input type="text" name="q" class="search-input"
+                        placeholder="Try searching 'pricing', 'roadmap', 'onboarding'..."
+                        autocomplete="off">
+                    <button type="submit" class="btn btn-primary" style="margin: 4px;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                        Try Demo
+                    </button>
+                </div>
+            </form>
+
+            <!-- Suggestion Chips -->
+            <div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; margin-bottom: 24px;">
+                <span style="font-size: 0.78rem; color: var(--text-2); margin-right: 4px; line-height: 28px;">Try:</span>
+                <% ['pricing', 'Q2 roadmap', 'onboarding', 'design system', 'marketing'].forEach(chip => { %>
+                    <a href="/demo?q=<%= chip %>" style="
+                        display: inline-block; padding: 5px 14px; border-radius: 20px; font-size: 0.8rem;
+                        border: 1px solid rgba(255,255,255,0.12); color: var(--text-2); text-decoration: none;
+                        background: rgba(255,255,255,0.04); transition: all 0.2s;
+                    " onmouseover="this.style.borderColor='rgba(139,92,246,0.5)'; this.style.color='var(--text-1)'; this.style.background='rgba(139,92,246,0.08)'"
+                       onmouseout="this.style.borderColor='rgba(255,255,255,0.12)'; this.style.color='var(--text-2)'; this.style.background='rgba(255,255,255,0.04)'"
+                    ><%= chip %></a>
+                <% }) %>
             </div>
+
+            <p style="font-size: 0.78rem; color: var(--text-2); margin-bottom: 24px; opacity: 0.7;">
+                No signup needed · or <a href="/signup" style="color: var(--primary); text-decoration: none; font-weight: 500;">create a free account →</a>
+            </p>
         </section>
+
 
         <!-- What It Does Section -->
         <section class="mt-12 mb-12" style="padding-top: 40px;">

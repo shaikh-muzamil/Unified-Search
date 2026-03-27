@@ -9,6 +9,7 @@ import { searchSlack, getRecentMessages } from './services/slack';
 import { searchNotion } from './services/notion';
 import { searchGoogleDrive, searchGmail } from './services/google';
 import { synthesizeAnswer } from './services/ai';
+import { getDemoResults } from './services/demoData';
 import axios from 'axios';
 
 // Load .env only in local development
@@ -121,6 +122,20 @@ app.get('/', async (req, res) => {
         results: null,
         query: '',
         recents: recentSlackMessages
+    });
+});
+
+// Demo Route — no auth required, uses sample data
+app.get('/demo', async (req, res) => {
+    const query = (req.query.q as string) || 'pricing';
+
+    const { slack: slackResults, notion: notionResults } = getDemoResults(query);
+    const aiSummary = await synthesizeAnswer(query, slackResults, notionResults).catch(() => null);
+
+    res.render('demo', {
+        query,
+        results: { slack: slackResults, notion: notionResults },
+        aiSummary
     });
 });
 

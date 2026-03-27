@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prism Demo — Try It Free</title>
+    <link rel="stylesheet" href="/style.css">
+    <style>
+        .demo-banner {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.12), rgba(245, 158, 11, 0.06));
+            border: 1px solid rgba(251, 191, 36, 0.3);
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            max-width: 900px;
+            margin: 0 auto 2rem auto;
+            flex-wrap: wrap;
+        }
+        .demo-banner-text {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+            color: var(--text-2, #94a3b8);
+        }
+        .demo-badge {
+            background: rgba(251, 191, 36, 0.2);
+            color: #fbbf24;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            padding: 3px 8px;
+            border-radius: 4px;
+            border: 1px solid rgba(251, 191, 36, 0.3);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-glow"></div>
+    <div class="bg-glow-2"></div>
+
+    <header>
+        <div class="container flex items-center justify-between">
+            <a href="/" class="font-heading font-bold text-xl flex items-center gap-2"
+                style="color: var(--text-1); text-decoration: none;">
+                <img class="prism-logo" src="/02_prism_full_color_dark.jpg" alt="Prism Logo" style="height: 32px; width: auto; object-fit: contain;">
+            </a>
+            <div class="flex items-center gap-6">
+                <a href="/login" style="color: var(--text-2); text-decoration: none; font-weight: 500;">Login</a>
+                <a href="/signup" class="btn btn-primary" style="padding: 10px 20px; font-size: 0.9rem;">Sign Up Free</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content container">
+
+        <!-- Search Bar -->
+        <section class="text-center mb-8">
+            <form action="/demo" method="GET" class="search-container" style="max-width: 700px; margin: 0 auto;">
+                <div class="search-input-wrapper">
+                    <input type="text" name="q" class="search-input" placeholder="Search across Slack & Notion..."
+                        value="<%= query %>" required autocomplete="off">
+                    <button type="submit" class="btn btn-primary" style="margin: 4px;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                        Search
+                    </button>
+                </div>
+            </form>
+
+            <!-- Quick search chips -->
+            <div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; margin-top: 14px;">
+                <% ['pricing', 'roadmap', 'onboarding', 'design', 'marketing'].forEach(chip => { %>
+                    <a href="/demo?q=<%= chip %>" style="
+                        display: inline-block;
+                        padding: 5px 14px;
+                        border-radius: 20px;
+                        font-size: 0.8rem;
+                        border: 1px solid rgba(255,255,255,0.12);
+                        color: var(--text-2);
+                        text-decoration: none;
+                        background: rgba(255,255,255,0.04);
+                        transition: all 0.2s;
+                        <% if (query === chip) { %>background: rgba(139,92,246,0.15); border-color: rgba(139,92,246,0.4); color: var(--text-1);<% } %>
+                    " onmouseover="this.style.borderColor='rgba(139,92,246,0.4)'; this.style.color='var(--text-1)'"
+                       onmouseout="this.style.borderColor='rgba(255,255,255,0.12)'; this.style.color='var(--text-2)'"
+                    ><%= chip %></a>
+                <% }) %>
+            </div>
+        </section>
+
+        <!-- Demo Banner -->
+        <div class="demo-banner">
+            <div class="demo-banner-text">
+                <span class="demo-badge">Demo</span>
+                <span>🎭 This is sample data from a fictional workspace. Connect your real tools to search your actual knowledge.</span>
+            </div>
+            <a href="/signup" class="btn btn-primary" style="padding: 8px 20px; font-size: 0.875rem; white-space: nowrap;">
+                Get Started Free →
+            </a>
+        </div>
+
+        <!-- AI Summary -->
+        <% if (typeof aiSummary !== 'undefined' && aiSummary) { %>
+            <div style="
+                max-width: 900px;
+                margin: 0 auto 2rem auto;
+                background: linear-gradient(135deg, rgba(139, 92, 246, 0.12), rgba(59, 130, 246, 0.08));
+                border: 1px solid rgba(139, 92, 246, 0.3);
+                border-radius: 16px;
+                padding: 1.5rem 2rem;
+                position: relative;
+                overflow: hidden;
+            ">
+                <div style="position: absolute; top: 0; left: 0; right: 0; height: 2px;
+                    background: linear-gradient(90deg, transparent, rgba(139,92,246,0.8), rgba(59,130,246,0.8), transparent);">
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 0.875rem;">
+                    <span style="font-size: 1.1rem;">✨</span>
+                    <span style="font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+                        background: linear-gradient(90deg, #a78bfa, #60a5fa); -webkit-background-clip: text;
+                        -webkit-text-fill-color: transparent; background-clip: text;">Prism AI Answer</span>
+                </div>
+                <p style="color: var(--text-1, #e2e8f0); font-size: 0.975rem; line-height: 1.7; margin: 0 0 1rem 0;"><%= aiSummary %></p>
+                <div style="display: flex; align-items: center; gap: 6px;">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" style="opacity: 0.4;">
+                        <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" fill="currentColor"/>
+                    </svg>
+                    <span style="font-size: 0.7rem; color: var(--text-muted, #64748b); opacity: 0.7;">Synthesized by Groq AI · Based on sample workspace data</span>
+                </div>
+            </div>
+        <% } %>
+
+        <!-- Results Grid -->
+        <div class="results-grid mt-4">
+            <!-- Slack Column -->
+            <div class="column">
+                <div class="grid-column-title">
+                    <span style="display: flex; align-items: center;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="var(--slack)"><path d="M5.042 15.165a2.528 2.528 0 0 1-2.52 2.523A2.528 2.528 0 0 1 0 15.165a2.527 2.527 0 0 1 2.522-2.52h2.52v2.52zM6.313 15.165a2.527 2.527 0 0 1 2.521-2.523 2.527 2.527 0 0 1 2.521 2.523v6.313A2.528 2.528 0 0 1 8.834 24a2.528 2.528 0 0 1-2.521-2.522v-6.313zM8.834 5.042a2.528 2.528 0 0 1-2.521-2.52A2.528 2.528 0 0 1 8.834 0a2.528 2.528 0 0 1 2.521 2.522v2.52H8.834zM8.834 6.313a2.528 2.528 0 0 1 2.521 2.521 2.528 2.528 0 0 1-2.521 2.521H2.522A2.528 2.528 0 0 1 0 8.834a2.528 2.528 0 0 1 2.522-2.521h6.312zM18.956 8.834a2.528 2.528 0 0 1 2.522-2.521A2.528 2.528 0 0 1 24 8.834a2.528 2.528 0 0 1-2.522 2.521h-2.522V8.834zM17.688 8.834a2.528 2.528 0 0 1-2.523 2.521 2.527 2.527 0 0 1-2.52-2.521V2.522A2.527 2.527 0 0 1 15.165 0a2.528 2.528 0 0 1 2.523 2.522v6.312zM15.165 18.956a2.528 2.528 0 0 1 2.523 2.522A2.528 2.528 0 0 1 15.165 24a2.527 2.527 0 0 1-2.52-2.522v-2.522h2.52zM15.165 17.688a2.527 2.527 0 0 1-2.523-2.523 2.526 2.526 0 0 1 2.52-2.52h6.313A2.527 2.527 0 0 1 24 15.165a2.528 2.528 0 0 1-2.522 2.523h-6.313z"/></svg>
+                    </span>
+                    <h3 class="font-heading">Slack Results</h3>
+                </div>
+                <div class="flex flex-col gap-4">
+                    <% results.slack.forEach(item => { %>
+                        <div class="card card-interactive" style="border-left: 3px solid var(--slack); cursor: default;">
+                            <div class="flex items-center justify-between mb-4">
+                                <strong class="font-semibold" style="color: var(--text-1);">@<%= item.user %></strong>
+                                <span class="badge badge-slack">#<%= item.channel %></span>
+                            </div>
+                            <p class="text-secondary mb-4 line-clamp-3" style="font-size: 0.95rem;"><%= item.text %></p>
+                            <span class="text-muted text-sm">Sample data · Acme Corp workspace</span>
+                        </div>
+                    <% }) %>
+                </div>
+            </div>
+
+            <!-- Notion Column -->
+            <div class="column">
+                <div class="grid-column-title">
+                    <span style="display: flex; align-items: center;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M4.459 4.208c.745-.186 1.118-.558 1.118-1.118V1.6H2.04v1.49c0 .56.373.932 1.118 1.118.56.111.932.373.932.932v12.288c0 .56-.372.932-.932 1.118-.745.186-1.118.56-1.118 1.118v1.49h7.45v-1.49c0-.558-.372-.932-1.118-1.118-.56-.186-.932-.558-.932-1.118V6.816l8.94 11.73h2.61V6.257c0-.56.372-.932 1.117-1.118.746-.186 1.118-.558 1.118-1.118V2.53h-7.078v1.49c0 .56.373.932 1.118 1.118.56.186.932.558.932 1.118v10.424L6.694 4.58H4.46v-.372z"/></svg>
+                    </span>
+                    <h3 class="font-heading">Notion Results</h3>
+                </div>
+                <div class="flex flex-col gap-4">
+                    <% results.notion.forEach(item => { %>
+                        <div class="card card-interactive" style="border-left: 3px solid var(--notion); cursor: default;">
+                            <div class="flex items-center gap-3 mb-4">
+                                <span style="font-size: 1.25rem;"><%= item.icon || '📄' %></span>
+                                <strong class="font-semibold" style="font-size: 1.05rem; color: var(--text-1);"><%= item.title %></strong>
+                            </div>
+                            <div class="flex gap-2 items-center justify-between">
+                                <span class="badge badge-notion"><%= item.object %></span>
+                                <span class="text-muted text-sm">Sample data · Acme Corp</span>
+                            </div>
+                        </div>
+                    <% }) %>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom CTA -->
+        <div class="text-center" style="margin: 3rem auto; padding: 3rem 2rem; max-width: 600px;">
+            <h2 class="font-heading text-gradient" style="font-size: 1.75rem; margin-bottom: 1rem;">Ready to search your real workspace?</h2>
+            <p class="text-secondary" style="margin-bottom: 2rem;">Connect your Slack and Notion in 60 seconds. No credit card required.</p>
+            <a href="/signup" class="btn btn-primary" style="font-size: 1.05rem; padding: 14px 32px;">Get Started Free →</a>
+        </div>
+
+    </main>
+</body>
+
+</html>
