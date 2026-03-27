@@ -10,6 +10,8 @@ import { searchNotion } from './services/notion';
 import { searchGoogleDrive, searchGmail } from './services/google';
 import { synthesizeAnswer } from './services/ai';
 import { getDemoResults } from './services/demoData';
+import { generateDigestForUser, getWeekOf } from './services/digest';
+import { sendDigestEmail } from './services/email';
 import axios from 'axios';
 
 // Load .env only in local development
@@ -523,6 +525,53 @@ app.get('/account', requireAuth, (req, res) => {
         notionConnected: !!user.notion_access_token,
         googleConnected: !!user.google_access_token
     });
+});
+
+// --- Weekly Digest Cron Endpoint ---
+app.get('/api/cron/weekly-digest', async (req, res) => {
+    // Verify Vercel Cron secret (Vercel sends this automatically)
+    const authHeader = req.headers['authorization'];
+    const cronSecret = process.env.CRON_SECRET;
+
+    if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
+        return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const weekOf = getWeekOf();
+    const results: { email: string; status: string }[] = [];
+
+    try {
+        // Get all users with Slack connected and an email
+        const { rows: users } = await pool.query(
+            `SELECT id, email, name, slack_access_token
+             FROM users
+             WHERE slack_access_token IS NOT NULL
+               AND email IS NOT NULL`
+        );
+
+        console.log(`[Digest] Starting weekly digest for ${users.length} users — week of ${weekOf}`);
+
+        for (const user of users) {
+            try {
+                const summary = await generateDigestForUser(user);
+                if (!summary) {
+                    results.push({ email: user.email, status: 'skipped (no content)' });
+                    continue;
+                }
+
+                const sent = await sendDigestEmail(user.email, user.name || 'there', summary, weekOf);
+                results.push({ email: user.email, status: sent ? 'sent' : 'failed' });
+            } catch (err: any) {
+                results.push({ email: user.email, status: `error: ${err.message}` });
+            }
+        }
+
+        console.log('[Digest] Complete:', results);
+        return res.json({ success: true, weekOf, results });
+    } catch (err: any) {
+        console.error('[Digest] Fatal error:', err.message);
+        return res.status(500).json({ error: err.message });
+    }
 });
 
 app.get('/sync', requireAuth, (req, res) => {
