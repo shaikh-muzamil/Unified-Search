@@ -1,4 +1,4 @@
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import Groq from 'groq-sdk';
 import { SlackResult } from './slack';
 
 interface NotionResult {
@@ -19,7 +19,7 @@ function buildPrompt(
 ): string {
     const slackSnippets = slackResults
         .slice(0, MAX_SLACK_RESULTS)
-        .map((r, i) => `[Slack #${r.channel} - ${r.user}]: ${r.text.slice(0, MAX_SNIPPET_LENGTH)}`)
+        .map((r) => `[Slack #${r.channel} - ${r.user}]: ${r.text.slice(0, MAX_SNIPPET_LENGTH)}`)
         .join('\n');
 
     const notionSnippets = notionResults
@@ -30,7 +30,7 @@ function buildPrompt(
     const hasSources = slackSnippets.length > 0 || notionSnippets.length > 0;
     if (!hasSources) return '';
 
-    return `You are Prism AI, a helpful knowledge assistant for a team. 
+    return `You are Prism AI, a helpful knowledge assistant for a team.
 A user searched for: "${query}"
 
 Here are the relevant results found across their connected tools:
@@ -38,7 +38,7 @@ Here are the relevant results found across their connected tools:
 ${slackSnippets ? `**Slack Messages:**\n${slackSnippets}` : ''}
 ${notionSnippets ? `\n**Notion Documents:**\n${notionSnippets}` : ''}
 
-Based ONLY on the above sources, write a concise 2-4 sentence answer that directly addresses the user's query. 
+Based ONLY on the above sources, write a concise 2-4 sentence answer that directly addresses the user's query.
 Be factual and specific. If the sources don't contain enough information to answer confidently, say so briefly.
 Do not use markdown formatting in your response — write plain prose only.`;
 }
@@ -48,9 +48,9 @@ export async function synthesizeAnswer(
     slackResults: SlackResult[],
     notionResults: NotionResult[]
 ): Promise<string | null> {
-    const apiKey = process.env.GEMINI_API_KEY;
+    const apiKey = process.env.GROQ_API_KEY;
     if (!apiKey) {
-        console.warn('GEMINI_API_KEY not set — skipping AI synthesis');
+        console.warn('GROQ_API_KEY not set — skipping AI synthesis');
         return null;
     }
 
@@ -61,13 +61,18 @@ export async function synthesizeAnswer(
     if (!prompt) return null;
 
     try {
-        const genAI = new GoogleGenerativeAI(apiKey);
-        const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
-        const result = await model.generateContent(prompt);
-        const text = result.response.text().trim();
+        const groq = new Groq({ apiKey });
+        const completion = await groq.chat.completions.create({
+            model: 'llama-3.3-70b-versatile',
+            messages: [{ role: 'user', content: prompt }],
+            max_tokens: 300,
+            temperature: 0.4,
+        });
+
+        const text = completion.choices[0]?.message?.content?.trim();
         return text || null;
     } catch (error: any) {
-        console.error('Gemini AI synthesis failed:', error?.message || error);
+        console.error('Groq AI synthesis failed:', error?.message || error);
         return null;
     }
 }
