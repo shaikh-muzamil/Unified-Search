@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Prism Assistant</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="glass-container">
+    <div class="header">
+      <div class="logo">
+        <!-- SVG Logo for Prism -->
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2L2 7L12 12V22L22 17V7L12 2Z" fill="url(#paint0_linear_prism)"/>
+          <path d="M2 17L12 22V12L2 7V17Z" fill="url(#paint1_linear_prism)"/>
+          <defs>
+            <linearGradient id="paint0_linear_prism" x1="12" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#3b82f6"/>
+              <stop offset="1" stop-color="#8b5cf6"/>
+            </linearGradient>
+            <linearGradient id="paint1_linear_prism" x1="2" y1="7" x2="12" y2="22" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#8b5cf6"/>
+              <stop offset="1" stop-color="#ec4899"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <span class="brand-text">Prism</span>
+      </div>
+      <a href="https://prism-search.com/account" target="_blank" class="settings-btn" title="Settings">⚙️</a>
+    </div>
+
+    <div class="search-section">
+      <h2 class="hero-text">What do you want to find?</h2>
+      <form id="search-form">
+        <div class="input-wrapper">
+          <input type="text" id="search-input" placeholder="Search Slack, Notion, & Drive..." autocomplete="off" autofocus />
+          <button type="submit" class="submit-btn">→</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="demo-section">
+      <p class="demo-label">How it works</p>
+      <div class="demo-cards">
+        <div class="demo-card">
+          <span class="icon">💬</span>
+          <span>Find Slack decisions</span>
+        </div>
+        <div class="demo-card">
+          <span class="icon">📝</span>
+          <span>Query Notion docs</span>
+        </div>
+        <div class="demo-card">
+          <span class="icon">📁</span>
+          <span>Search Drive files</span>
+        </div>
+      </div>
+      <div class="ai-burst">
+        <p>✨ <strong>AI Synthesis:</strong> Prism automatically reads the results and generates a custom answer for you.</p>
+      </div>
+    </div>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>

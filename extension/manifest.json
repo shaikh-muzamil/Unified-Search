@@ -1,0 +1,13 @@
+{
+  "manifest_version": 3,
+  "name": "Prism Search Assistant",
+  "version": "1.0.0",
+  "description": "Your unified knowledge layer for Slack, Notion, and Google Workspace.",
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Search Prism"
+  },
+  "permissions": [
+    "storage"
+  ]
+}
