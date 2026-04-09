@@ -568,6 +568,12 @@ app.get('/api/cron/weekly-digest', async (req, res) => {
 
                 const { summary, stats } = digestData;
                 const sent = await sendDigestEmail(user.email, user.name || 'there', summary, weekOf, stats);
+                
+                await pool.query(
+                    'INSERT INTO digests (user_id, week_of, summary, stats) VALUES ($1, $2, $3, $4)',
+                    [user.id, weekOf, summary, JSON.stringify(stats)]
+                );
+
                 results.push({ email: user.email, status: sent ? 'sent' : 'failed' });
             } catch (err: any) {
                 results.push({ email: user.email, status: `error: ${err.message}` });
@@ -579,6 +585,20 @@ app.get('/api/cron/weekly-digest', async (req, res) => {
     } catch (err: any) {
         console.error('[Digest] Fatal error:', err.message);
         return res.status(500).json({ error: err.message });
+    }
+});
+
+app.get('/insights', requireAuth, async (req, res) => {
+    const user = (req.session as any).user;
+    try {
+        const { rows: digests } = await pool.query(
+            'SELECT * FROM digests WHERE user_id = $1 ORDER BY created_at DESC',
+            [user.id]
+        );
+        res.render('insights', { user, digests });
+    } catch (e) {
+        console.error('Error fetching insights:', e);
+        res.render('insights', { user, digests: [], error: 'Could not load insights' });
     }
 });
 

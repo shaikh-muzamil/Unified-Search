@@ -86,9 +86,17 @@ export const initDB = async () => {
             );
         `);
 
-
-
-        console.log('--- Database Connected & Tables Initialized ---');
+        // Digests table for storing past weekly digests
+        await pool.query(`
+            CREATE TABLE IF NOT EXISTS digests (
+                id SERIAL PRIMARY KEY,
+                user_id INT,
+                week_of TEXT,
+                summary TEXT,
+                stats JSONB,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+        `);        console.log('--- Database Connected & Tables Initialized ---');
     } catch (error) {
         console.error('Database Initialization Error:', error);
         throw error;

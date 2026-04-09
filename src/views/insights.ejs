@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prism Insights</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+    <!-- Background Effects -->
+    <div class="bg-glow"></div>
+    <div class="bg-glow-2"></div>
+
+    <%- include('partials/header', { user: user }) %>
+
+    <main class="main-content container">
+        <section class="text-center mb-12">
+            <h1 class="mb-4 text-gradient">Your Insights</h1>
+            <p class="text-secondary text-center mb-12"
+                style="font-size: 1.25rem; max-width: 600px; margin-left: auto; margin-right: auto;">
+                Review your past AI digests. Your proactive Chief of Staff, archived right here.
+            </p>
+        </section>
+
+        <% if (typeof error !== 'undefined' && error) { %>
+            <div class="card card-glass text-center text-red-400 mb-8 p-4 border border-red-500/20">
+                <%= error %>
+            </div>
+        <% } %>
+
+        <div class="flex flex-col gap-6" style="max-width: 800px; margin: 0 auto;">
+            <% if (typeof digests !== 'undefined' && digests && digests.length > 0) { %>
+                <% digests.forEach(digest => { %>
+                    <div class="ai-summary-card" style="
+                        background: linear-gradient(135deg, rgba(139, 92, 246, 0.12), rgba(59, 130, 246, 0.08));
+                        border: 1px solid rgba(139, 92, 246, 0.3);
+                        border-radius: 16px;
+                        padding: 1.5rem 2rem;
+                        position: relative;
+                        overflow: hidden;
+                    ">
+                        <!-- Glow accent -->
+                        <div style="
+                            position: absolute; top: 0; left: 0; right: 0; height: 2px;
+                            background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.8), rgba(59, 130, 246, 0.8), transparent);
+                        "></div>
+                        
+                        <div class="flex items-center justify-between mb-4">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span style="font-size: 1.1rem;">✨</span>
+                                <span style="
+                                    font-size: 0.85rem;
+                                    font-weight: 700;
+                                    letter-spacing: 0.1em;
+                                    text-transform: uppercase;
+                                    background: linear-gradient(90deg, #a78bfa, #60a5fa);
+                                    -webkit-background-clip: text;
+                                    -webkit-text-fill-color: transparent;
+                                    background-clip: text;
+                                ">Week of <%= digest.week_of %></span>
+                            </div>
+                            <span class="text-sm text-muted">
+                                <%= new Date(digest.created_at).toLocaleDateString() %>
+                            </span>
+                        </div>
+
+                        <p style="
+                            color: var(--text-1, #e2e8f0);
+                            font-size: 0.975rem;
+                            line-height: 1.7;
+                            margin: 0 0 1rem 0;
+                        "><%= digest.summary %></p>
+
+                        <% if (digest.stats) { %>
+                            <% const stats = typeof digest.stats === 'string' ? JSON.parse(digest.stats) : digest.stats; %>
+                            <div class="flex gap-4 mt-6 pt-4" style="border-top: 1px solid rgba(255,255,255,0.1);">
+                                <div class="text-center">
+                                    <div style="font-size: 1.2rem; font-weight: bold; color: #a78bfa;"><%= stats.hoursSaved || 0 %>h</div>
+                                    <div style="font-size: 0.7rem; color: #64748b; text-transform: uppercase;">Saved</div>
+                                </div>
+                                <div class="text-center" style="padding-left: 1rem; border-left: 1px solid rgba(255,255,255,0.05);">
+                                    <div style="font-size: 1.2rem; font-weight: bold; color: #60a5fa;"><%= stats.itemsSurfaced || 0 %></div>
+                                    <div style="font-size: 0.7rem; color: #64748b; text-transform: uppercase;">Items Surfaced</div>
+                                </div>
+                                <div class="text-center" style="padding-left: 1rem; border-left: 1px solid rgba(255,255,255,0.05);">
+                                    <div style="font-size: 1.2rem; font-weight: bold; color: #f472b6;"><%= stats.topIntegration || 'None' %></div>
+                                    <div style="font-size: 0.7rem; color: #64748b; text-transform: uppercase;">Top Source</div>
+                                </div>
+                            </div>
+                        <% } %>
+                    </div>
+                <% }) %>
+            <% } else { %>
+                <div class="card-glass text-center text-muted py-12" style="border-radius: 16px;">
+                    <span style="font-size: 2rem; display: block; margin-bottom: 1rem;">📭</span>
+                    <h3 class="text-xl text-white mb-2">No Insights Yet</h3>
+                    <p>Your weekly digests will appear here automatically every week.</p>
+                </div>
+            <% } %>
+        </div>
+    </main>
+</body>
+</html>
